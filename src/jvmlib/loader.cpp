@@ -84,8 +84,8 @@ jvm::ErrorOr<jvm::AccessFlags> read(std::istream& in) noexcept {
 template<>
 jvm::ErrorOr<jvm::ver16> read(std::istream& in) noexcept {
     jvm::ver16 res{};
-    res.major = TRY(read<std::uint16_t>(in));
     res.minor = TRY(read<std::uint16_t>(in));
+    res.major = TRY(read<std::uint16_t>(in));
     return res;
 }
 
