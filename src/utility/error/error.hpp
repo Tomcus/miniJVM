@@ -34,7 +34,7 @@
 ({\
     auto _expression_result = (expression);\
     if (_expression_result.isError()) {\
-        return std::move(_expression_result.getError());\
+        return _expression_result.getError();\
     }\
     _expression_result.getValue();\
 })
@@ -52,7 +52,7 @@
     _expression_result.getValue();\
 })
 
-namespace esc {
+namespace jvm {
 
     /// Simple error struct
     struct [[nodiscard]] Error {
@@ -103,14 +103,14 @@ namespace esc {
         static_assert(!std::is_same_v<ResultType, void>, "Return type can't be void. Please use Error instead");
 
         /// Implicit constructor, that moves result from the function.
-        ErrorOr(ResultType && result): data(result), error{} { }
+        ErrorOr(const ResultType & result): data(result), error{} { }
         /// Implicit constructor, that moves error result from the function.
-        ErrorOr(Error&& otherError): data(std::nullopt), error(otherError) { }
+        ErrorOr(const Error& otherError): data(std::nullopt), error(otherError) { }
         /// Specific proxy constructor, that constructs error value.
         ErrorOr(const int errNo, const std::string_view message): data(std::nullopt), error(errNo, message) { }
 
         /// Deleted copy constructor (value should be moved)
-        ErrorOr(const ErrorOr<ResultType>& other) = delete;
+        ErrorOr(const ErrorOr<ResultType>& other) = default;
         /// Deleted assign operator (value should be moved)
         void operator=(const ErrorOr<ResultType>& other) = delete;
 
