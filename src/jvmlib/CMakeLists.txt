@@ -1,5 +1,5 @@
 add_library(jvmlib
-    loader.cpp
+    types/class.cpp
 )
 
 target_include_directories(jvmlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

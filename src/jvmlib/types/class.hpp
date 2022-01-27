@@ -2,10 +2,12 @@
 #define MINI_JVM_TYPES_CLASS_HPP
 
 #include "basic.hpp"
-#include "const.hpp"
+#include "const_pool.hpp"
+#include "error/error.hpp"
 
 #include <cstdint>
 #include <vector>
+#include <filesystem>
 
 namespace jvm {
 
@@ -15,29 +17,43 @@ struct ver16 {
 };
 
 struct Attribute {
-    ConstPollIndex attrNameIndex;
-    std::vector<byte> data;
+    ConstPool::Index attrNameIndex;
+    std::vector<Byte> data;
 };
 
 using Attributes = std::vector<Attribute>;
 
 struct Field {
     std::uint16_t flags;
-    ConstPollIndex nameIndex;
-    ConstPollIndex descriptorIndex;
+    ConstPool::Index nameIndex;
+    ConstPool::Index descriptorIndex;
     Attributes attributes;
 };
 
 using Fields = std::vector<jvm::Field>;
-using Interfaces = std::vector<ConstPollIndex>;
-using ConstPool = std::vector<ConstPoolValue>;
+using Interfaces = std::vector<ConstPool::Index>;
 
-struct Class {
+class Class {
+public:
+    enum class AccessFlags: std::uint16_t {
+        ACC_PUBLIC = 0x001,
+        ACC_FINAL = 0x010,
+        ACC_SUPER = 0x020,
+        ACC_INTERFACE = 0x200,
+        ACC_ABSTRACT = 0x400
+    };
+
+    static ErrorOr<Class> load(const std::filesystem::path& path) noexcept;
+protected:
+
+    Error readVersion(std::istream& in) noexcept;
+    Error readConstPool(std::istream& in) noexcept;
+
     ver16 version;
-    ConstPool constpool;
+    std::vector<ConstPool::Value> constPool;
     AccessFlags accessFlags;
-    ConstPollIndex thisClass;
-    ConstPollIndex superClass;
+    ConstPool::Index thisClass;
+    ConstPool::Index superClass;
     Interfaces interfaces;
     Fields fields;
     Fields methods;

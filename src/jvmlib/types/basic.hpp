@@ -2,17 +2,19 @@
 #define MINI_JVM_TYPES_BASIC_HPP
 
 #include <cstdint>
+#include <variant>
+#include <vector>
+#include <string>
 
 namespace jvm {
-    using byte = std::uint8_t;
 
-enum class AccessFlags: std::uint16_t {
-    ACC_PUBLIC = 0x001,
-    ACC_FINAL = 0x010,
-    ACC_SUPER = 0x020,
-    ACC_INTERFACE = 0x200,
-    ACC_ABSTRACT = 0x400
-};
+using Byte = std::uint8_t;
+using PrimitiveInteger = std::variant<std::int32_t, std::int64_t>;
+using PrimitiveFloat = std::variant<float, double>;
+using PrimitiveType = std::variant<PrimitiveFloat, PrimitiveInteger>;
+using PrimitiveArray = std::variant<std::vector<std::int32_t>, std::vector<float>, std::vector<std::int64_t>, std::vector<double>>;
+using BasicType = std::variant<PrimitiveType, std::string>;
+using BasicArray = std::variant<PrimitiveArray, std::vector<std::string>>;
 
 }
 

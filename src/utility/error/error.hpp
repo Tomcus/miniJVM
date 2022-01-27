@@ -6,12 +6,15 @@
 #include <string_view>
 #include <source_location>
 
+#include <fmt/format.h>
+#include <spdlog/spdlog.h>
+
 /// Custom assert function
 #define ASSERT(expression, message)\
 {\
     auto _sl = std::source_location::current();\
     if (!(expression)) {\
-        TraceLog(LOG_FATAL, "ASSERT(%s) failed: %s\nat %s in %s", #expression, message, _sl.function_name(), _sl.file_name());\
+        spdlog::error("ASSERT({}) failed: {}\nat {} in {}", #expression, message, _sl.function_name(), _sl.file_name());\
         exit(1);\
     }\
 }
@@ -20,7 +23,7 @@
 {\
     auto _sl = std::source_location::current();\
     if (error.isError()) {\
-        TraceLog(LOG_FATAL, "ASSERT_ERROR(%s) failed: at %s in %s", error.getErrorMessage(), _sl.function_name(), _sl.file_name());\
+        spdlog::error("ASSERT_ERROR({}) failed: at {} in {}", error.getErrorMessage(), _sl.function_name(), _sl.file_name());\
         exit(1);\
     }\
 }
@@ -33,7 +36,7 @@
 #define TRY(expression)\
 ({\
     auto _expression_result = (expression);\
-    if (_expression_result.isError()) {\
+    if (_expression_result.isError()) [[unlikely]] {\
         return _expression_result.getError();\
     }\
     _expression_result.getValue();\
@@ -60,6 +63,8 @@ namespace jvm {
         Error(): errorNumber(0), message("") { }
         /// Main constructor, that assigns error value to this struct
         Error(const int errNo, const std::string_view mess): errorNumber(errNo), message(mess.data(), mess.size()) { }
+        /// Secondary constructor, that creates error only from message and assigns generic error number (-1)
+        Error(const std::string_view mess): errorNumber(-1), message(mess.data(), mess.size()) { }
         /// Default copy constructor
         Error(const Error&) = default;
         
@@ -91,6 +96,14 @@ namespace jvm {
         /// Error message
         std::string message{""};
     };
+
+    #define CHECK(expression)\
+    {\
+        auto _sl = std::source_location::current();\
+        if (!(expression)) {\
+            return jvm::Error{fmt::format("CHECK({}) failed in function: {}\nIn file: {}", #expression, _sl.function_name(), _sl.file_name())};\
+        }\
+    }
 
 
     /**
