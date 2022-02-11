@@ -2,6 +2,7 @@
 #include "basic.hpp"
 #include "const_pool.hpp"
 #include "serialization.hpp"
+#include "utils.hpp"
 
 #include <cstdint>
 #include <fstream>
@@ -91,14 +92,14 @@ std::string read(std::istream & in) {
 }
 
 Class Class::load(const std::filesystem::path& path) {
-    ConstPool::check<ClassError>(std::filesystem::exists(path), fmt::format("Class file {} doesn't exists.", path.c_str()));
+    check<ClassError>(std::filesystem::exists(path), fmt::format("Class file {} doesn't exists.", path.c_str()));
     std::ifstream file(path);
-    ConstPool::check<ClassError>(file.good(), "Class file couldn't be opened.");
+    check<ClassError>(file.good(), "Class file couldn't be opened.");
 
     const auto magic = read<std::uint32_t>(file);
 
     constexpr static std::uint32_t cafeBabe = 0xcafebabe;
-    ConstPool::check<ClassError>(magic == cafeBabe, "Class file magic bytes are not 'cafebabe'");
+    check<ClassError>(magic == cafeBabe, "Class file magic bytes are not 'cafebabe'");
 
     Class res{};
     
@@ -112,9 +113,9 @@ Class Class::load(const std::filesystem::path& path) {
     res.methods = read<Fields>(file);
     res.attributes = read<Attributes>(file);
 
-    int check;
-    file >> check;
-    ConstPool::check<ClassError>(file.eof(), "Class file doesn't reach eof after it was parsed.");
+    int eofCheck;
+    file >> eofCheck;
+    check<ClassError>(file.eof(), "Class file doesn't reach eof after it was parsed.");
 
     return res;
 }
@@ -123,13 +124,13 @@ void Class::readVersion(std::istream& in) {
     version.minor = read<std::uint16_t>(in);
     version.major = read<std::uint16_t>(in);
 
-    ConstPool::check<ReadingError>(version.minor == 0, "Wrong minimal version of class file format.");
-    ConstPool::check<ReadingError>(version.major >= MIN_CLASS_FILE_FORMAT_MAJOR_VERSION, fmt::format("Minimal major version of class file format ({}) not satisfied", MIN_CLASS_FILE_FORMAT_MAJOR_VERSION));
+    check<ReadingError>(version.minor == 0, "Wrong minimal version of class file format.");
+    check<ReadingError>(version.major >= MIN_CLASS_FILE_FORMAT_MAJOR_VERSION, fmt::format("Minimal major version of class file format ({}) not satisfied", MIN_CLASS_FILE_FORMAT_MAJOR_VERSION));
 }
 
 void Class::readConstPool(std::istream& in) {
     const std::size_t constPoolMaxIndex = read<std::uint16_t>(in);
-    ConstPool::check<ClassError>(constPoolMaxIndex != 0, "Const poll max index should be bigger then 0");
+    check<ClassError>(constPoolMaxIndex != 0, "Const poll max index should be bigger then 0");
     const std::size_t constPoolSize = constPoolMaxIndex - 1;
     if (constPoolSize == 0) {
         spdlog::warn("Empty constpool");
@@ -168,10 +169,10 @@ void Class::readInterfaces(std::istream& in) {
 }
 
 std::string_view Class::getClassName() const {
-    auto& cpReference = constPool[thisClass];
+    const auto& cpReference = constPool[thisClass];
     if (std::holds_alternative<ConstPool::ClassInfo>(cpReference)) {
-        auto& classInfo = std::get<ConstPool::ClassInfo>(cpReference);
-        auto& cpReferenceToString = constPool[classInfo.name];
+        const auto& classInfo = std::get<ConstPool::ClassInfo>(cpReference);
+        const auto& cpReferenceToString = constPool[classInfo.name];
         if (std::holds_alternative<BasicType>(cpReferenceToString) &&
             std::holds_alternative<std::string>(std::get<BasicType>(cpReferenceToString))) {
             return std::get<std::string>(std::get<BasicType>(cpReferenceToString));
@@ -181,10 +182,10 @@ std::string_view Class::getClassName() const {
 }
 
 std::string_view Class::getParentClassName() const {
-    auto& cpReference = constPool[superClass];
+    const auto& cpReference = constPool[superClass];
     if (std::holds_alternative<ConstPool::ClassInfo>(cpReference)) {
-        auto& classInfo = std::get<ConstPool::ClassInfo>(cpReference);
-        auto& cpReferenceToString = constPool[classInfo.name];
+        const auto& classInfo = std::get<ConstPool::ClassInfo>(cpReference);
+        const auto& cpReferenceToString = constPool[classInfo.name];
         if (std::holds_alternative<BasicType>(cpReferenceToString) &&
             std::holds_alternative<std::string>(std::get<BasicType>(cpReferenceToString))) {
             return std::get<std::string>(std::get<BasicType>(cpReferenceToString));

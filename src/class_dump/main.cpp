@@ -19,7 +19,7 @@
 #pragma GCC diagnostic pop
 
 template <typename Type>
-std::string dumpBasicTypeValue(const Type&) {
+std::string dumpBasicTypeValue(const Type& /*value*/) {
     return fmt::format("Unsupported basic type: {}", typeid(Type).name());
 }
 
@@ -29,7 +29,7 @@ std::string dumpBasicTypeValue(const std::string& value) {
 }
 
 template <typename Type>
-std::string dumpConstPoolValue(const Type&) {
+std::string dumpConstPoolValue(const Type& /*value*/) {
     return fmt::format("Unsupported const pool type: {}", typeid(Type).name());
 }
 
@@ -66,22 +66,22 @@ void dumpConstPool(const std::vector<jvm::ConstPool::Value>& constPool, std::ost
 }
 
 void dumpInterfaces(const jvm::Interfaces& interfaces, std::ostream& output) {
-    for (std::size_t i = 0; i < interfaces.size(); ++i) {
-        output << "\tInterface<index: " << interfaces[i] << ">\n";
+    for (const auto& interface: interfaces) {
+        output << "\tInterface<index: " << interface << ">\n";
     }
 }
 
 void dumpFields(const jvm::Fields& fields, std::ostream& output) {
-    for (auto& field: fields) {
+    for (const auto& field: fields) {
         output << fmt::format("\tField<flags: {:#04x}, name: {}, descriptor: {}>\n", field.flags, field.nameIndex, field.descriptorIndex);
-        for (auto& attribute: field.attributes) {
+        for (const auto& attribute: field.attributes) {
             output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", attribute.attrNameIndex, fmt::join(attribute.data, ", "));
         }
     }
 }
 
 void dumpAttribute(const jvm::Attributes& attributes, std::ostream& output) {
-    for (auto& attribute: attributes) {
+    for (const auto& attribute: attributes) {
         output << fmt::format("\tAttribute<name: {}, data: [{}]>\n", attribute.attrNameIndex, fmt::join(attribute.data, ", "));
     }
 }
