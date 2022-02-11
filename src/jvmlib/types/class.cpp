@@ -1,10 +1,13 @@
 #include "class.hpp"
+#include "basic.hpp"
 #include "const_pool.hpp"
-#include "const_pool_validation.hpp"
 #include "serialization.hpp"
 
 #include <cstdint>
 #include <fstream>
+#include <istream>
+#include <string>
+#include <variant>
 
 namespace jvm {
 
@@ -17,24 +20,63 @@ ConstPool::Tag read(std::istream & in) {
 template<>
 ConstPool::MethodRef read(std::istream & in) {
     ConstPool::MethodRef ref{};
-    ref.classInfo = read<ConstPool::Index>(in);
-    ref.nameAndType = read<ConstPool::Index>(in);
+    ref.classInfo = read<ConstPool::Index>(in) - 1;
+    ref.nameAndType = read<ConstPool::Index>(in) - 1;
     return ref;
 }
 
 template<>
 ConstPool::NameAndType read(std::istream & in) {
     ConstPool::NameAndType nat{};
-    nat.name = read<ConstPool::Index>(in);
-    nat.type = read<ConstPool::Index>(in);
+    nat.name = read<ConstPool::Index>(in) - 1;
+    nat.type = read<ConstPool::Index>(in) - 1;
     return nat;
 }
 
 template<>
 ConstPool::ClassInfo read(std::istream & in) {
     ConstPool::ClassInfo info{};
-    info.name = read<ConstPool::Index>(in);
+    info.name = read<ConstPool::Index>(in) - 1;
     return info;
+}
+
+template<>
+Class::AccessFlags read(std::istream& in) {
+    return static_cast<Class::AccessFlags>(read<std::uint16_t>(in));
+}
+
+template<>
+Attributes read(std::istream& in) {
+    Attributes attrs;
+    const auto attrsCount = read<std::uint16_t>(in);
+    attrs.reserve(attrsCount);
+    for (std::size_t i = 0; i < attrsCount; ++i) {
+        Attribute attr;
+        attr.attrNameIndex = read<ConstPool::Index>(in) - 1;
+        const auto attrDataLength = read<std::uint32_t>(in);
+        attr.data.resize(attrDataLength);
+        if (attrDataLength > 0) {
+            in.read(reinterpret_cast<char *>(attr.data.data()), attrDataLength);
+        }
+        attrs.emplace_back(std::move(attr));
+    }
+    return attrs;
+}
+
+template<>
+Fields read(std::istream& in) {
+    std::vector<Field> fields;
+    const auto fieldsCount = read<std::uint16_t>(in);
+    fields.reserve(fieldsCount);
+    for (std::size_t i = 0; i < fieldsCount; ++i) {
+        fields.emplace_back(Field{
+            .flags = read<std::uint16_t>(in),
+            .nameIndex = static_cast<ConstPool::Index>(read<ConstPool::Index>(in) - 1),
+            .descriptorIndex = static_cast<ConstPool::Index>(read<ConstPool::Index>(in) - 1),
+            .attributes = read<Attributes>(in)
+        });
+    }
+    return fields;
 }
 
 template<>
@@ -62,6 +104,17 @@ Class Class::load(const std::filesystem::path& path) {
     
     res.readVersion(file);
     res.readConstPool(file);
+    res.accessFlags = read<Class::AccessFlags>(file);
+    res.thisClass = read<ConstPool::Index>(file) - 1;
+    res.superClass = read<ConstPool::Index>(file) - 1;
+    res.readInterfaces(file);
+    res.fields = read<Fields>(file);
+    res.methods = read<Fields>(file);
+    res.attributes = read<Attributes>(file);
+
+    int check;
+    file >> check;
+    ConstPool::check<ClassError>(file.eof(), "Class file doesn't reach eof after it was parsed.");
 
     return res;
 }
@@ -83,7 +136,7 @@ void Class::readConstPool(std::istream& in) {
         return;
     }
 
-    constPool.resize(constPoolSize);
+    constPool.reserve(constPoolSize);
     for (std::size_t i = 0; i < constPoolSize; ++i) {
         auto typeTag = read<ConstPool::Tag>(in);
         switch(typeTag) {
@@ -104,6 +157,40 @@ void Class::readConstPool(std::istream& in) {
                 throw ConstPool::Error{fmt::format("Unhandled tag: {:#04x}", static_cast<std::uint8_t>(typeTag))};
         }
     }
+}
+
+void Class::readInterfaces(std::istream& in) {
+    const auto interfaceCount = read<std::uint16_t>(in);
+    interfaces.reserve(interfaceCount);
+    for (std::size_t i = 0; i < interfaceCount; ++i) {
+        interfaces.push_back(read<ConstPool::Index>(in) - 1);
+    }
+}
+
+std::string_view Class::getClassName() const {
+    auto& cpReference = constPool[thisClass];
+    if (std::holds_alternative<ConstPool::ClassInfo>(cpReference)) {
+        auto& classInfo = std::get<ConstPool::ClassInfo>(cpReference);
+        auto& cpReferenceToString = constPool[classInfo.name];
+        if (std::holds_alternative<BasicType>(cpReferenceToString) &&
+            std::holds_alternative<std::string>(std::get<BasicType>(cpReferenceToString))) {
+            return std::get<std::string>(std::get<BasicType>(cpReferenceToString));
+        }
+    }
+    throw ClassError{"Can't get the class name."};
+}
+
+std::string_view Class::getParentClassName() const {
+    auto& cpReference = constPool[superClass];
+    if (std::holds_alternative<ConstPool::ClassInfo>(cpReference)) {
+        auto& classInfo = std::get<ConstPool::ClassInfo>(cpReference);
+        auto& cpReferenceToString = constPool[classInfo.name];
+        if (std::holds_alternative<BasicType>(cpReferenceToString) &&
+            std::holds_alternative<std::string>(std::get<BasicType>(cpReferenceToString))) {
+            return std::get<std::string>(std::get<BasicType>(cpReferenceToString));
+        }
+    }
+    throw ClassError{"Can't get the class's super class name."};
 }
 
 }

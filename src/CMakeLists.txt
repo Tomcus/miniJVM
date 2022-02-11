@@ -1,8 +1,3 @@
 add_subdirectory(jvmlib)
-
-add_executable(jvm main.cpp)
-
-target_link_libraries(jvm
-    project_settings
-    jvmlib
-)
+add_subdirectory(class_dump)
+add_subdirectory(jvm)

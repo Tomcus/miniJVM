@@ -47,10 +47,9 @@ public:
     };
 
     static Class load(const std::filesystem::path& path);
-protected:
 
-    void readVersion(std::istream& in);
-    void readConstPool(std::istream& in);
+    std::string_view getClassName() const;
+    std::string_view getParentClassName() const;
 
     ver16 version;
     std::vector<ConstPool::Value> constPool;
@@ -61,6 +60,12 @@ protected:
     Fields fields;
     Fields methods;
     Attributes attributes;
+
+protected:
+
+    void readVersion(std::istream& in);
+    void readConstPool(std::istream& in);
+    void readInterfaces(std::istream& in);
 };
 
 class ReadingError: public std::runtime_error {

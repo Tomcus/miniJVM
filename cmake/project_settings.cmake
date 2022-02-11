@@ -1,4 +1,7 @@
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_library(project_settings INTERFACE)
 
@@ -7,7 +10,7 @@ set_target_properties(project_settings PROPERTIES CXX_STANDARD 20)
 target_compile_options(project_settings INTERFACE
     -Wall
     -Wextra
-    # -Wpedantic - can't use TRY and MUST
+    -Wpedantic
     -Wunused
     -Wmaybe-uninitialized
     -Wshadow
