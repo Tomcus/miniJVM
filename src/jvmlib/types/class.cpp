@@ -1,7 +1,6 @@
 #include "class.hpp"
 #include "const_pool.hpp"
 #include "const_pool_validation.hpp"
-#include "const_pool_formating.hpp"
 #include "serialization.hpp"
 
 #include <cstdint>
@@ -10,113 +9,101 @@
 namespace jvm {
 
 template<>
-ErrorOr<ConstPool::Tag> read(std::istream & in) noexcept {
-    auto tagNum = TRY(read<std::uint8_t>(in));
+ConstPool::Tag read(std::istream & in) {
+    auto tagNum = read<std::uint8_t>(in);
     return static_cast<ConstPool::Tag>(tagNum);
 }
 
 template<>
-ErrorOr<ConstPool::MethodRef> read(std::istream & in) noexcept {
+ConstPool::MethodRef read(std::istream & in) {
     ConstPool::MethodRef ref{};
-    ref.classInfo = TRY(read<ConstPool::Index>(in));
-    ref.nameAndType = TRY(read<ConstPool::Index>(in));
+    ref.classInfo = read<ConstPool::Index>(in);
+    ref.nameAndType = read<ConstPool::Index>(in);
     return ref;
 }
 
 template<>
-ErrorOr<ConstPool::NameAndType> read(std::istream & in) noexcept {
+ConstPool::NameAndType read(std::istream & in) {
     ConstPool::NameAndType nat{};
-    nat.name = TRY(read<ConstPool::Index>(in));
-    nat.type = TRY(read<ConstPool::Index>(in));
+    nat.name = read<ConstPool::Index>(in);
+    nat.type = read<ConstPool::Index>(in);
     return nat;
 }
 
 template<>
-ErrorOr<ConstPool::ClassInfo> read(std::istream & in) noexcept {
+ConstPool::ClassInfo read(std::istream & in) {
     ConstPool::ClassInfo info{};
-    info.name = TRY(read<ConstPool::Index>(in));
+    info.name = read<ConstPool::Index>(in);
     return info;
 }
 
 template<>
-ErrorOr<std::string> read(std::istream & in) noexcept {
-    const auto stringSize = TRY(read<std::uint16_t>(in));
+std::string read(std::istream & in) {
+    const auto stringSize = read<std::uint16_t>(in);
     std::string res{};
     res.resize(stringSize);
     if (!in.read(res.data(), stringSize).good()) {
-        return Error{getIStreamErrorNumber(in), fmt::format("Can't read string of lenght: {}. {}", stringSize, getIStreamErrorString(in))};
+        throw jvm::ReadingError{fmt::format("Can't read string of lenght: {}. {}", stringSize, getIStreamErrorString(in))};
     }
     return res;
 }
 
-ErrorOr<Class> Class::load(const std::filesystem::path& path) noexcept {
-    CHECK(std::filesystem::exists(path));
+Class Class::load(const std::filesystem::path& path) {
+    ConstPool::check<ClassError>(std::filesystem::exists(path), fmt::format("Class file {} doesn't exists.", path.c_str()));
     std::ifstream file(path);
-    CHECK(file.good());
+    ConstPool::check<ClassError>(file.good(), "Class file couldn't be opened.");
 
-    const auto magic = TRY(read<std::uint32_t>(file));
+    const auto magic = read<std::uint32_t>(file);
 
-    CHECK(magic == 0xcafebabe);
+    constexpr static std::uint32_t cafeBabe = 0xcafebabe;
+    ConstPool::check<ClassError>(magic == cafeBabe, "Class file magic bytes are not 'cafebabe'");
 
     Class res{};
     
-    TRY(res.readVersion(file));
-    TRY(res.readConstPool(file));
-
+    res.readVersion(file);
+    res.readConstPool(file);
 
     return res;
 }
 
-Error Class::readVersion(std::istream& in) noexcept {
-    version.minor = TRY(read<std::uint16_t>(in));
-    version.major = TRY(read<std::uint16_t>(in));
+void Class::readVersion(std::istream& in) {
+    version.minor = read<std::uint16_t>(in);
+    version.major = read<std::uint16_t>(in);
 
-    CHECK(version.minor == 0);
-    CHECK(version.major >= 55);
-    return {};
+    ConstPool::check<ReadingError>(version.minor == 0, "Wrong minimal version of class file format.");
+    ConstPool::check<ReadingError>(version.major >= MIN_CLASS_FILE_FORMAT_MAJOR_VERSION, fmt::format("Minimal major version of class file format ({}) not satisfied", MIN_CLASS_FILE_FORMAT_MAJOR_VERSION));
 }
 
-Error Class::readConstPool(std::istream& in) noexcept {
-    const std::size_t constPoolMaxIndex = TRY(read<std::uint16_t>(in));
-    CHECK(constPoolMaxIndex != 0);
+void Class::readConstPool(std::istream& in) {
+    const std::size_t constPoolMaxIndex = read<std::uint16_t>(in);
+    ConstPool::check<ClassError>(constPoolMaxIndex != 0, "Const poll max index should be bigger then 0");
     const std::size_t constPoolSize = constPoolMaxIndex - 1;
     if (constPoolSize == 0) {
         spdlog::warn("Empty constpool");
-        return {};
+        return;
     }
 
     constPool.resize(constPoolSize);
     for (std::size_t i = 0; i < constPoolSize; ++i) {
-        auto typeTag = TRY(read<ConstPool::Tag>(in));
+        auto typeTag = read<ConstPool::Tag>(in);
         switch(typeTag) {
             case ConstPool::Tag::MethodRef: {
-                auto mr = TRY(read<ConstPool::MethodRef>(in));
-                constPool.push_back(mr);
+                constPool.emplace_back(read<ConstPool::MethodRef>(in));
             }
             break;
             case ConstPool::Tag::Class:
-                constPool.push_back(TRY(read<ConstPool::ClassInfo>(in)));
+                constPool.emplace_back(read<ConstPool::ClassInfo>(in));
             break;
             case ConstPool::Tag::NameAndType:
-                constPool.push_back(TRY(read<ConstPool::NameAndType>(in)));
+                constPool.emplace_back(read<ConstPool::NameAndType>(in));
             break;
             case ConstPool::Tag::String:
-                constPool.push_back(TRY(read<std::string>(in)));
+                constPool.emplace_back(read<std::string>(in));
             break;
             default:
-                return Error{fmt::format("Unhandled tag: {:#04x}", typeTag)};
+                throw ConstPool::Error{fmt::format("Unhandled tag: {:#04x}", static_cast<std::uint8_t>(typeTag))};
         }
     }
-
-    for (std::size_t i = 0; i < constPoolSize; ++i) {
-        const auto& constPoolValue = constPool[i];
-        spdlog::debug("Validating info at index {:#04x} with value {}", i + 1, format(constPoolValue));
-        TRY(std::visit([&](const auto& val){
-            return validate(val, constPool);
-        }, constPoolValue));
-    }
-
-    return {};
 }
 
 }

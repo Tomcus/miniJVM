@@ -3,9 +3,10 @@
 
 #include "basic.hpp"
 #include "const_pool.hpp"
-#include "error/error.hpp"
 
 #include <cstdint>
+#include <stdexcept>
+#include <string_view>
 #include <vector>
 #include <filesystem>
 
@@ -35,6 +36,8 @@ using Interfaces = std::vector<ConstPool::Index>;
 
 class Class {
 public:
+    constexpr static std::uint16_t MIN_CLASS_FILE_FORMAT_MAJOR_VERSION = 55;
+
     enum class AccessFlags: std::uint16_t {
         ACC_PUBLIC = 0x001,
         ACC_FINAL = 0x010,
@@ -43,11 +46,11 @@ public:
         ACC_ABSTRACT = 0x400
     };
 
-    static ErrorOr<Class> load(const std::filesystem::path& path) noexcept;
+    static Class load(const std::filesystem::path& path);
 protected:
 
-    Error readVersion(std::istream& in) noexcept;
-    Error readConstPool(std::istream& in) noexcept;
+    void readVersion(std::istream& in);
+    void readConstPool(std::istream& in);
 
     ver16 version;
     std::vector<ConstPool::Value> constPool;
@@ -58,6 +61,16 @@ protected:
     Fields fields;
     Fields methods;
     Attributes attributes;
+};
+
+class ReadingError: public std::runtime_error {
+public:
+    ReadingError(const std::string& message): runtime_error(message) { }
+};
+
+class ClassError: public std::runtime_error {
+public:
+    ClassError(const std::string& message): runtime_error(message) { }
 };
 
 }

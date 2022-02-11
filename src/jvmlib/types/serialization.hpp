@@ -5,11 +5,10 @@
 #include <string_view>
 #include <array>
 #include <concepts>
+#include <stdexcept>
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
-
-#include "error/error.hpp"
 
 namespace jvm {
 
@@ -45,15 +44,15 @@ inline const std::string_view getIStreamErrorString(const std::istream& in) {
 }
 
 template<typename ReturnType>
-jvm::ErrorOr<ReturnType> read(std::istream&) noexcept {
-    return jvm::Error{-1, "Unsupported type to read."};
+ReturnType read(std::istream&) {
+    throw std::runtime_error{"Unsupported type to read."};
 }
 
 template<std::unsigned_integral ReturnType> 
-jvm::ErrorOr<ReturnType> read(std::istream& in) noexcept {
+ReturnType read(std::istream& in) {
     static std::array<char, 64> readBuffer{};
     if (!in.read(readBuffer.data(), sizeof(ReturnType))) {
-        return jvm::Error{getIStreamErrorNumber(in), fmt::format("Can't read the unsigned integer of size {} bytes. {}", sizeof(ReturnType), getIStreamErrorString(in))};
+        throw std::runtime_error{fmt::format("Can't read the unsigned integer of size {} bytes. {}", sizeof(ReturnType), getIStreamErrorString(in))};
     }
     ReturnType res = 0;
     for (std::size_t i = 0; i < sizeof(ReturnType); ++i) {

@@ -2,12 +2,16 @@
 #define MINI_JVM_TYPES_CONST_POOL_HPP
 
 #include "basic.hpp"
-#include "error/error.hpp"
 
 #include <cstdint>
 #include <string>
+#include <string_view>
 #include <variant>
 #include <vector>
+#include <stdexcept>
+#include <typeinfo>
+
+#include <fmt/format.h>
 
 namespace jvm::ConstPool {
 
@@ -48,6 +52,22 @@ struct ClassInfo {
 };
 
 using Value = std::variant<MethodRef, ClassInfo, NameAndType, BasicType>;
+
+class Error: public std::runtime_error {
+public:
+    Error(const std::string& message): runtime_error(message) { }
+};
+
+template<typename Error>
+inline void check(bool condition, const std::string_view message = "") {
+    if (!condition) {
+        if (message.empty()) {
+            throw Error{fmt::format("Check failed with message: NO MESSAGE PROVIDED (err_type: {})", typeid(Error).name())};
+        } else {
+            throw Error{fmt::format("Check failed with message: {}", message)};
+        }
+    }
+}
 
 }
 
