@@ -15,32 +15,47 @@ target_compile_options(project_settings INTERFACE
     -Wnon-virtual-dtor
 )
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    message(STATUS "Setting up DEBUG build")
+message(STATUS "Configuring ${CMAKE_BUILD_TYPE} build type.")
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        target_link_libraries(project_settings INTERFACE
+            asan
+        )
+
+        target_compile_options(project_settings INTERFACE
+            -fno-omit-frame-pointer
+            -fsanitize=address
+        )
+    endif()
 
     target_compile_definitions(project_settings INTERFACE
         DEBUG
     )
 
-    # target_link_libraries(project_settings INTERFACE
-    #     asan
-    # )
-
-    # target_compile_options(project_settings INTERFACE
-    #     -fno-omit-frame-pointer
-    #     -fsanitize=address
-    # )
-
-    # target_link_options(project_settings INTERFACE
-    #     -fno-omit-frame-pointer
-    #     -fsanitize=address
-    # )
 endif()
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    message(STATUS "Setting up RELEASE build")
-
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
     target_compile_options(project_settings INTERFACE
         -Werror
     )
+endif()
+
+find_program(CLANG_TIDY NAMES clang-tidy)
+if (CLANG_TIDY)
+    message(STATUS "Adding clang-tidy")
+    set_property(TARGET project_settings PROPERTY CXX_CLANG_TIDY "clang-tidy;-checks=-*,performance-*,modernize-*,clang-analyzer-*,concurrency-*,readability-*")
+    # set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=-*,performance-*,modernize-*,clang-analyzer-*,concurrency-*,readability-*,-modernize-use-trailing-return-type")
+endif()
+
+find_program(CPP_CHECK NAMES cppcheck)
+if (CPP_CHECK)
+    message(STATUS "Adding cppcheck")
+    set_property(TARGET project_settings PROPERTY CXX_CPPCHECK cppcheck)
+endif()
+
+find_program(IWYU NAMES include-what-you-use)
+if (IWYU)
+    message(STATUS "Adding include-what-you-use")
+    set_property(TARGET project_settings PROPERTY CXX_INCLUDE_WHAT_YOU_USE include-what-you-use)
 endif()
