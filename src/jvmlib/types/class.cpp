@@ -85,7 +85,7 @@ std::string read(std::istream & in) {
     std::string res{};
     res.resize(stringSize);
     if (!in.read(res.data(), stringSize).good()) {
-        throw jvm::ReadingError{fmt::format("Can't read string of lenght: {}. {}", stringSize, getIStreamErrorString(in))};
+        throw jvm::ReadingError{fmt::format("Can't read string of length: {}. {}", stringSize, getIStreamErrorString(in))};
     }
     return res;
 }
