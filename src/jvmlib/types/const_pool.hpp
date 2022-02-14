@@ -47,11 +47,20 @@ struct MethodRef {
     Index nameAndType;
 };
 
+struct FieldRef {
+    Index classInfo;
+    Index nameAndType;
+};
+
+struct StringRef {
+    Index string;
+};
+
 struct ClassInfo {
     Index name;
 };
 
-using Value = std::variant<MethodRef, ClassInfo, NameAndType, BasicType>;
+using Value = std::variant<StringRef, FieldRef, MethodRef, ClassInfo, NameAndType, BasicType>;
 
 class Error: public std::runtime_error {
 public:

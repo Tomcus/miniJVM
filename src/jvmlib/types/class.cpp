@@ -27,6 +27,14 @@ ConstPool::MethodRef read(std::istream & in) {
 }
 
 template<>
+ConstPool::FieldRef read(std::istream& in) {
+    return ConstPool::FieldRef {
+        .classInfo = static_cast<ConstPool::Index>(read<ConstPool::Index>(in) - 1),
+        .nameAndType = static_cast<ConstPool::Index>(read<ConstPool::Index>(in) - 1)
+    };
+}
+
+template<>
 ConstPool::NameAndType read(std::istream & in) {
     ConstPool::NameAndType nat{};
     nat.name = read<ConstPool::Index>(in) - 1;
@@ -39,6 +47,13 @@ ConstPool::ClassInfo read(std::istream & in) {
     ConstPool::ClassInfo info{};
     info.name = read<ConstPool::Index>(in) - 1;
     return info;
+}
+
+template<>
+ConstPool::StringRef read(std::istream & in) {
+    return ConstPool::StringRef {
+        .string = static_cast<ConstPool::Index>(read<ConstPool::Index>(in) - 1)
+    };
 }
 
 template<>
@@ -141,9 +156,14 @@ void Class::readConstPool(std::istream& in) {
     for (std::size_t i = 0; i < constPoolSize; ++i) {
         auto typeTag = read<ConstPool::Tag>(in);
         switch(typeTag) {
-            case ConstPool::Tag::MethodRef: {
+            case ConstPool::Tag::MethodRef:
                 constPool.emplace_back(read<ConstPool::MethodRef>(in));
-            }
+            break;
+            case ConstPool::Tag::FieldRef:
+                constPool.emplace_back(read<ConstPool::FieldRef>(in));
+            break;
+            case ConstPool::Tag::StringRef:
+                constPool.emplace_back(read<ConstPool::StringRef>(in));
             break;
             case ConstPool::Tag::Class:
                 constPool.emplace_back(read<ConstPool::ClassInfo>(in));

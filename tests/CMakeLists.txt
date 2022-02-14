@@ -12,3 +12,4 @@ function(add_class_dump_test)
 endfunction(add_class_dump_test)
 
 add_class_dump_test(Add)
+add_class_dump_test(HelloWorld)

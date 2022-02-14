@@ -51,6 +51,16 @@ std::string dumpConstPoolValue(const jvm::ConstPool::MethodRef& value) {
 }
 
 template <>
+std::string dumpConstPoolValue(const jvm::ConstPool::FieldRef& value) {
+    return fmt::format("FieldRef<classInfo: {}, nameAndType: {}>", value.classInfo, value.nameAndType);
+}
+
+template <>
+std::string dumpConstPoolValue(const jvm::ConstPool::StringRef& value) {
+    return fmt::format("StringRef<stringIndex: {}>", value.string);
+}
+
+template <>
 std::string dumpConstPoolValue(const jvm::ConstPool::NameAndType& value) {
     return fmt::format("NameAndType<name: {}, type: {}>", value.name, value.type);
 }
