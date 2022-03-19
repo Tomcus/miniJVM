@@ -89,7 +89,7 @@ const ConstPool::Value& ConstPool::operator[](const std::size_t index) const {
 
 void ConstPool::validateIndex(const std::size_t index) const {
     if (index == 0)
-        throw std::out_of_range("Const pool is ConstPool from 1. 0 shouldn't be accessed.");
+        throw std::out_of_range("Const pool is indexed from 1. 0 shouldn't be accessed.");
     if (index > data.size())
         throw std::out_of_range(fmt::format("Const pool index [{}] out of range (max is {})", index, data.size()));
 }
