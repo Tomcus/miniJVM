@@ -64,7 +64,23 @@ public:
         Index nameAndType;
     };
 
-    using Value = std::variant<ClassInfo, StringRef, FieldRef, MethodRef, NameAndType, std::string, InvokeDynamic>;
+    struct MethodHandle {
+        enum class Type: std::uint8_t {
+            GET_FIELD = 1,
+            GET_STATIC = 2,
+            PUT_FIELD = 3,
+            PUT_STATIC = 4,
+            INVOKE_VIRTUAL = 5,
+            INVOKE_STATIC = 6,
+            INVOKE_SPECIAL = 7,
+            NEW_INVOKE_SPECIAL = 8,
+            INVOKE_INTERFACE = 9
+        };
+        Type kind;
+        Index referenceIndex;
+    };
+
+    using Value = std::variant<ClassInfo, StringRef, FieldRef, MethodRef, NameAndType, std::string, InvokeDynamic, MethodHandle>;
 
     class Error: public std::runtime_error {
     public:

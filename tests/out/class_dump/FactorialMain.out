@@ -1,0 +1,81 @@
+Class FactorialMain extends java/lang/Object
+v.61.0
+======================
+ConstPool[66]:
+	1: MethodRef<classInfo: 2, nameAndType: 3>
+	2: ClassInfo<name: 4>
+	3: NameAndType<name: 5, type: 6>
+	4: String<"java/lang/Object">
+	5: String<"<init>">
+	6: String<"()V">
+	7: ClassInfo<name: 8>
+	8: String<"Factorial">
+	9: MethodRef<classInfo: 7, nameAndType: 3>
+	10: MethodRef<classInfo: 7, nameAndType: 11>
+	11: NameAndType<name: 12, type: 13>
+	12: String<"calculate">
+	13: String<"(I)V">
+	14: FieldRef<classInfo: 15, nameAndType: 16>
+	15: ClassInfo<name: 17>
+	16: NameAndType<name: 18, type: 19>
+	17: String<"java/lang/System">
+	18: String<"out">
+	19: String<"Ljava/io/PrintStream;">
+	20: FieldRef<classInfo: 7, nameAndType: 21>
+	21: NameAndType<name: 22, type: 23>
+	22: String<"calculationHistory">
+	23: String<"Ljava/lang/String;">
+	24: FieldRef<classInfo: 7, nameAndType: 25>
+	25: NameAndType<name: 26, type: 27>
+	26: String<"result">
+	27: String<"I">
+	28: MethodRef<classInfo: 29, nameAndType: 30>
+	29: ClassInfo<name: 31>
+	30: NameAndType<name: 32, type: 33>
+	31: String<"java/lang/Integer">
+	32: String<"toString">
+	33: String<"(I)Ljava/lang/String;">
+	34: InvokeDynamic<bootstrapMethod: 0, nameAndType: 35>
+	35: NameAndType<name: 36, type: 37>
+	36: String<"makeConcatWithConstants">
+	37: String<"(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;">
+	38: MethodRef<classInfo: 39, nameAndType: 40>
+	39: ClassInfo<name: 41>
+	40: NameAndType<name: 42, type: 43>
+	41: String<"java/io/PrintStream">
+	42: String<"println">
+	43: String<"(Ljava/lang/String;)V">
+	44: ClassInfo<name: 45>
+	45: String<"FactorialMain">
+	46: String<"Code">
+	47: String<"LineNumberTable">
+	48: String<"main">
+	49: String<"([Ljava/lang/String;)V">
+	50: String<"SourceFile">
+	51: String<"FactorialMain.java">
+	52: String<"BootstrapMethods">
+	53: MethhodHandle<kind: INVOKE_STATIC, referenceIndex: 54>
+	54: MethodRef<classInfo: 55, nameAndType: 56>
+	55: ClassInfo<name: 57>
+	56: NameAndType<name: 36, type: 58>
+	57: String<"java/lang/invoke/StringConcatFactory">
+	58: String<"(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;">
+	59: StringRef<stringIndex: 60>
+	60: String<"=">
+	61: String<"InnerClasses">
+	62: ClassInfo<name: 63>
+	63: String<"java/lang/invoke/MethodHandles$Lookup">
+	64: ClassInfo<name: 65>
+	65: String<"java/lang/invoke/MethodHandles">
+	66: String<"Lookup">
+Interfaces[0]:
+Fields[0]:
+Methods[2]:
+	Field<flags: 0x01, name: 5, descriptor: 6>
+		Attribute<name: 46, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 47, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
+	Field<flags: 0x09, name: 48, descriptor: 49>
+		Attribute<name: 46, data: [0, 3, 0, 2, 0, 0, 0, 37, 187, 0, 7, 89, 183, 0, 9, 76, 43, 16, 10, 182, 0, 10, 178, 0, 14, 43, 180, 0, 20, 43, 180, 0, 24, 184, 0, 28, 186, 0, 34, 0, 0, 182, 0, 38, 177, 0, 0, 0, 1, 0, 47, 0, 0, 0, 18, 0, 4, 0, 0, 0, 3, 0, 8, 0, 4, 0, 14, 0, 5, 0, 36, 0, 6]>
+Attributes[3]:
+	Attribute<name: 50, data: [0, 51]>
+	Attribute<name: 52, data: [0, 1, 0, 53, 0, 1, 0, 59]>
+	Attribute<name: 61, data: [0, 1, 0, 62, 0, 64, 0, 66, 0, 25]>

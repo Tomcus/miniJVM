@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <ostream>
+#include <stdexcept>
 #include <string>
 #include <variant>
 #include <vector>
@@ -56,6 +57,35 @@ std::string dumpConstPoolValue(const jvm::ConstPool::StringRef& value) {
 template <>
 std::string dumpConstPoolValue(const jvm::ConstPool::NameAndType& value) {
     return fmt::format("NameAndType<name: {}, type: {}>", value.name, value.type);
+}
+
+std::string to_string(jvm::ConstPool::MethodHandle::Type value) {
+    switch (value) {
+        case jvm::ConstPool::MethodHandle::Type::GET_FIELD:
+            return "GET_FIELD";
+        case jvm::ConstPool::MethodHandle::Type::PUT_FIELD:
+            return "PUT_FIELD";
+        case jvm::ConstPool::MethodHandle::Type::GET_STATIC:
+            return "GET_STATIC";
+        case jvm::ConstPool::MethodHandle::Type::PUT_STATIC:
+            return "PUT_STATIC";
+        case jvm::ConstPool::MethodHandle::Type::INVOKE_STATIC:
+            return "INVOKE_STATIC";
+        case jvm::ConstPool::MethodHandle::Type::INVOKE_INTERFACE:
+            return "INVOKE_INTERFACE";
+        case jvm::ConstPool::MethodHandle::Type::INVOKE_SPECIAL:
+            return "INVOKE_SPECIAL";
+        case jvm::ConstPool::MethodHandle::Type::INVOKE_VIRTUAL:
+            return "INVOKE_VIRTUAL";
+        case jvm::ConstPool::MethodHandle::Type::NEW_INVOKE_SPECIAL:
+            return "NEW_INVOKE_SPECIAL";
+    }
+    throw std::runtime_error("WTF - This is imposible");
+}
+
+template <>
+std::string dumpConstPoolValue(const jvm::ConstPool::MethodHandle& value) {
+    return fmt::format("MethhodHandle<kind: {}, referenceIndex: {}>", to_string(value.kind), value.referenceIndex);
 }
 
 void dumpConstPool(const jvm::ConstPool& constPool, std::ostream& output) {

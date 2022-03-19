@@ -78,6 +78,21 @@ ConstPool::InvokeDynamic read(std::istream & in) {
     };
 }
 
+template<>
+ConstPool::MethodHandle::Type read(std::istream& in) {
+    const auto val = read<std::uint8_t>(in);
+    check<ConstPool::Error>(val >= 1 && val <= 9, "MethodHandle kind should be value between 1 and 9");
+    return static_cast<ConstPool::MethodHandle::Type>(val);
+}
+
+template<>
+ConstPool::MethodHandle read(std::istream & in) {
+    return ConstPool::MethodHandle {
+        .kind = read<ConstPool::MethodHandle::Type>(in),
+        .referenceIndex = read<ConstPool::Index>(in)
+    };
+}
+
 size_t ConstPool::size() const {
     return dataSize;
 }
@@ -127,6 +142,9 @@ void ConstPool::loadInstance(std::istream& in) {
             break;
             case ConstPool::Tag::InvokeDynamic:
                 data.emplace_back(read<ConstPool::InvokeDynamic>(in));
+            break;
+            case ConstPool::Tag::MethodHandle:
+                data.emplace_back(read<ConstPool::MethodHandle>(in));
             break;
             default:
                 throw Error{fmt::format("Unhandled tag: {:#02x}", static_cast<std::uint8_t>(typeTag))};
