@@ -1,0 +1,56 @@
+Class Parrot extends java/lang/Object
+v.61.0
+======================
+ConstPool[43]:
+	1: MethodRef<classInfo: 2, nameAndType: 3>
+	2: ClassInfo<name: 4>
+	3: NameAndType<name: 5, type: 6>
+	4: String<"java/lang/Object">
+	5: String<"<init>">
+	6: String<"()V">
+	7: MethodRef<classInfo: 8, nameAndType: 9>
+	8: ClassInfo<name: 10>
+	9: NameAndType<name: 11, type: 12>
+	10: String<"java/lang/System">
+	11: String<"console">
+	12: String<"()Ljava/io/Console;">
+	13: FieldRef<classInfo: 8, nameAndType: 14>
+	14: NameAndType<name: 15, type: 16>
+	15: String<"out">
+	16: String<"Ljava/io/PrintStream;">
+	17: StringRef<stringIndex: 18>
+	18: String<"FUUUCK!">
+	19: MethodRef<classInfo: 20, nameAndType: 21>
+	20: ClassInfo<name: 22>
+	21: NameAndType<name: 23, type: 24>
+	22: String<"java/io/PrintStream">
+	23: String<"println">
+	24: String<"(Ljava/lang/String;)V">
+	25: StringRef<stringIndex: 26>
+	26: String<"Enter your name: ">
+	27: MethodRef<classInfo: 28, nameAndType: 29>
+	28: ClassInfo<name: 30>
+	29: NameAndType<name: 31, type: 32>
+	30: String<"java/io/Console">
+	31: String<"readLine">
+	32: String<"(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;">
+	33: ClassInfo<name: 34>
+	34: String<"Parrot">
+	35: String<"Code">
+	36: String<"LineNumberTable">
+	37: String<"main">
+	38: String<"([Ljava/lang/String;)V">
+	39: String<"StackMapTable">
+	40: ClassInfo<name: 41>
+	41: String<"java/lang/String">
+	42: String<"SourceFile">
+	43: String<"Parrot.java">
+Interfaces[0]:
+Fields[0]:
+Methods[2]:
+	Field<flags: 0x01, name: 5, descriptor: 6>
+		Attribute<name: 35, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 36, 0, 0, 0, 6, 0, 1, 0, 0, 0, 3]>
+	Field<flags: 0x09, name: 37, descriptor: 38>
+		Attribute<name: 35, data: [0, 3, 0, 4, 0, 0, 0, 50, 184, 0, 7, 76, 43, 199, 0, 12, 178, 0, 13, 18, 17, 182, 0, 19, 177, 43, 18, 25, 3, 189, 0, 2, 182, 0, 27, 77, 3, 62, 29, 16, 10, 162, 0, 16, 178, 0, 13, 44, 182, 0, 19, 132, 3, 1, 167, 255, 240, 177, 0, 0, 0, 2, 0, 36, 0, 0, 0, 38, 0, 9, 0, 0, 0, 5, 0, 4, 0, 7, 0, 8, 0, 8, 0, 16, 0, 9, 0, 17, 0, 12, 0, 28, 0, 16, 0, 36, 0, 17, 0, 43, 0, 16, 0, 49, 0, 19, 0, 39, 0, 0, 0, 18, 0, 3, 252, 0, 17, 7, 0, 28, 253, 0, 12, 7, 0, 40, 1, 250, 0, 18]>
+Attributes[1]:
+	Attribute<name: 42, data: [0, 43]>

@@ -13,3 +13,7 @@ endfunction(add_class_dump_test)
 
 add_class_dump_test(Add)
 add_class_dump_test(HelloWorld)
+add_class_dump_test(Parrot)
+add_class_dump_test(TestFuncCall)
+add_class_dump_test(FactorialMain)
+add_class_dump_test(Factorial)
