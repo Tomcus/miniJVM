@@ -52,7 +52,7 @@ public:
     std::string_view getParentClassName() const;
 
     ver16 version;
-    std::vector<ConstPool::Value> constPool;
+    ConstPool constPool;
     AccessFlags accessFlags;
     ConstPool::Index thisClass;
     ConstPool::Index superClass;

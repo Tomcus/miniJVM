@@ -2,26 +2,26 @@ Class Add extends java/lang/Object
 v.61.0
 ======================
 ConstPool[14]:
-	0: MethodRef<classInfo: 1, nameAndType: 2>
-	1: ClassInfo<name: 3>
-	2: NameAndType<name: 4, type: 5>
-	3: String<"java/lang/Object">
-	4: String<"<init>">
-	5: String<"()V">
-	6: ClassInfo<name: 7>
-	7: String<"Add">
-	8: String<"Code">
-	9: String<"LineNumberTable">
-	10: String<"add">
-	11: String<"(II)I">
-	12: String<"SourceFile">
-	13: String<"Add.java">
+	1: MethodRef<classInfo: 2, nameAndType: 3>
+	2: ClassInfo<name: 4>
+	3: NameAndType<name: 5, type: 6>
+	4: String<"java/lang/Object">
+	5: String<"<init>">
+	6: String<"()V">
+	7: ClassInfo<name: 8>
+	8: String<"Add">
+	9: String<"Code">
+	10: String<"LineNumberTable">
+	11: String<"add">
+	12: String<"(II)I">
+	13: String<"SourceFile">
+	14: String<"Add.java">
 Interfaces[0]:
 Fields[0]:
 Methods[2]:
-	Field<flags: 0x01, name: 4, descriptor: 5>
-		Attribute<name: 8, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
-	Field<flags: 0x09, name: 10, descriptor: 11>
-		Attribute<name: 8, data: [0, 2, 0, 2, 0, 0, 0, 4, 26, 27, 96, 172, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 3]>
+	Field<flags: 0x01, name: 5, descriptor: 6>
+		Attribute<name: 9, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
+	Field<flags: 0x09, name: 11, descriptor: 12>
+		Attribute<name: 9, data: [0, 2, 0, 2, 0, 0, 0, 4, 26, 27, 96, 172, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 3]>
 Attributes[1]:
-	Attribute<name: 12, data: [0, 14]>
+	Attribute<name: 13, data: [0, 14]>

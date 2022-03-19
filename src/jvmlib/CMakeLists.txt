@@ -1,4 +1,5 @@
 add_library(jvmlib
+    types/const_pool.cpp
     types/class.cpp
 )
 

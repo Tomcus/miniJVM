@@ -1,4 +1,3 @@
-#include <fmt/core.h>
 #include "types.hpp"
 #include <spdlog/spdlog.h>
 

@@ -14,19 +14,9 @@
 #pragma GCC diagnostic ignored "-Wshadow"
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #include <lyra/lyra.hpp>
-#include <spdlog/spdlog.h>
 #include <fmt/format.h>
+#include <spdlog/spdlog.h>
 #pragma GCC diagnostic pop
-
-template <typename Type>
-std::string dumpBasicTypeValue(const Type& /*value*/) {
-    return fmt::format("Unsupported basic type: {}", typeid(Type).name());
-}
-
-template <>
-std::string dumpBasicTypeValue(const std::string& value) {
-    return fmt::format("String<\"{}\">", value);
-}
 
 template <typename Type>
 std::string dumpConstPoolValue(const Type& /*value*/) {
@@ -34,10 +24,8 @@ std::string dumpConstPoolValue(const Type& /*value*/) {
 }
 
 template <>
-std::string dumpConstPoolValue(const jvm::BasicType& value) {
-    return std::visit([](const auto& val){
-        return dumpBasicTypeValue(val);
-    }, value);
+std::string dumpConstPoolValue(const std::string& value) {
+    return fmt::format("String<\"{}\">", value);
 }
 
 template <>
@@ -65,8 +53,8 @@ std::string dumpConstPoolValue(const jvm::ConstPool::NameAndType& value) {
     return fmt::format("NameAndType<name: {}, type: {}>", value.name, value.type);
 }
 
-void dumpConstPool(const std::vector<jvm::ConstPool::Value>& constPool, std::ostream& output) {
-    for (std::size_t i = 0; i < constPool.size(); ++i) {
+void dumpConstPool(const jvm::ConstPool& constPool, std::ostream& output) {
+    for (std::size_t i = 1; i < constPool.size() + 1; ++i) {
         output << "\t" << i << ": ";
         output << std::visit([](const auto& val) {
             return dumpConstPoolValue(val);
