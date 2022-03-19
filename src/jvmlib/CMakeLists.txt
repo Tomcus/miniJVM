@@ -10,3 +10,7 @@ target_link_libraries(jvmlib PUBLIC
     fmt
     spdlog
 )
+
+target_add_unit_tests(TARGET jvmlib FILES
+    utils/ref.unit.cpp
+)
