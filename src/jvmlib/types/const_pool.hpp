@@ -59,7 +59,12 @@ public:
         Index name;
     };
 
-    using Value = std::variant<ClassInfo, StringRef, FieldRef, MethodRef, NameAndType, std::string>;
+    struct InvokeDynamic {
+        Index boostrapMethod;
+        Index nameAndType;
+    };
+
+    using Value = std::variant<ClassInfo, StringRef, FieldRef, MethodRef, NameAndType, std::string, InvokeDynamic>;
 
     class Error: public std::runtime_error {
     public:

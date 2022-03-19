@@ -44,6 +44,11 @@ std::string dumpConstPoolValue(const jvm::ConstPool::FieldRef& value) {
 }
 
 template <>
+std::string dumpConstPoolValue(const jvm::ConstPool::InvokeDynamic& value) {
+    return fmt::format("InvokeDynamic<bootstrapMethod: {}, nameAndType: {}>", value.boostrapMethod, value.nameAndType);
+}
+
+template <>
 std::string dumpConstPoolValue(const jvm::ConstPool::StringRef& value) {
     return fmt::format("StringRef<stringIndex: {}>", value.string);
 }

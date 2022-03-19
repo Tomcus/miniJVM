@@ -70,6 +70,14 @@ ConstPool::StringRef read(std::istream & in) {
     };
 }
 
+template<>
+ConstPool::InvokeDynamic read(std::istream & in) {
+    return ConstPool::InvokeDynamic {
+        .boostrapMethod = read<ConstPool::Index>(in),
+        .nameAndType = read<ConstPool::Index>(in)
+    };
+}
+
 size_t ConstPool::size() const {
     return dataSize;
 }
@@ -116,6 +124,9 @@ void ConstPool::loadInstance(std::istream& in) {
             break;
             case ConstPool::Tag::String:
                 data.emplace_back(read<std::string>(in));
+            break;
+            case ConstPool::Tag::InvokeDynamic:
+                data.emplace_back(read<ConstPool::InvokeDynamic>(in));
             break;
             default:
                 throw Error{fmt::format("Unhandled tag: {:#02x}", static_cast<std::uint8_t>(typeTag))};
