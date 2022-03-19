@@ -35,46 +35,46 @@ ConstPool::Tag read(std::istream & in) {
 template<>
 ConstPool::MethodRef read(std::istream & in) {
     return ConstPool::MethodRef{
-        .classInfo = read<ConstPool::Index>(in),
-        .nameAndType = read<ConstPool::Index>(in)
+        .classInfo = read<Index>(in),
+        .nameAndType = read<Index>(in)
     };
 }
 
 template<>
 ConstPool::FieldRef read(std::istream& in) {
     return ConstPool::FieldRef {
-        .classInfo = read<ConstPool::Index>(in),
-        .nameAndType = read<ConstPool::Index>(in)
+        .classInfo = read<Index>(in),
+        .nameAndType = read<Index>(in)
     };
 }
 
 template<>
 ConstPool::NameAndType read(std::istream & in) {
     return ConstPool::NameAndType {
-        .name = read<ConstPool::Index>(in),
-        .type = read<ConstPool::Index>(in)
+        .name = read<Index>(in),
+        .type = read<Index>(in)
     };
 }
 
 template<>
 ConstPool::ClassInfo read(std::istream & in) {
     return ConstPool::ClassInfo {
-        .name = read<ConstPool::Index>(in)
+        .name = read<Index>(in)
     };
 }
 
 template<>
 ConstPool::StringRef read(std::istream & in) {
     return ConstPool::StringRef {
-        .string = read<ConstPool::Index>(in)
+        .string = read<Index>(in)
     };
 }
 
 template<>
 ConstPool::InvokeDynamic read(std::istream & in) {
     return ConstPool::InvokeDynamic {
-        .boostrapMethod = read<ConstPool::Index>(in),
-        .nameAndType = read<ConstPool::Index>(in)
+        .boostrapMethod = read<Index>(in),
+        .nameAndType = read<Index>(in)
     };
 }
 
@@ -89,7 +89,7 @@ template<>
 ConstPool::MethodHandle read(std::istream & in) {
     return ConstPool::MethodHandle {
         .kind = read<ConstPool::MethodHandle::Type>(in),
-        .referenceIndex = read<ConstPool::Index>(in)
+        .referenceIndex = read<Index>(in)
     };
 }
 

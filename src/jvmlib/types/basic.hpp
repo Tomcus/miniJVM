@@ -6,9 +6,10 @@
 #include <vector>
 #include <string>
 
+#include "types/class/base.hpp"
+
 namespace jvm {
 
-using Byte = std::uint8_t;
 using PrimitiveInteger = std::variant<std::int32_t, std::int64_t>;
 using PrimitiveFloat = std::variant<float, double>;
 using PrimitiveType = std::variant<PrimitiveFloat, PrimitiveInteger>;

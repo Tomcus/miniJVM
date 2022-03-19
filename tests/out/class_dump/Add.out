@@ -19,9 +19,9 @@ ConstPool[14]:
 Interfaces[0]:
 Fields[0]:
 Methods[2]:
-	Field<flags: 0x01, name: 5, descriptor: 6>
+	Method<flags: 0x01, name: 5, descriptor: 6>
 		Attribute<name: 9, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
-	Field<flags: 0x09, name: 11, descriptor: 12>
+	Method<flags: 0x09, name: 11, descriptor: 12>
 		Attribute<name: 9, data: [0, 2, 0, 2, 0, 0, 0, 4, 26, 27, 96, 172, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 3]>
 Attributes[1]:
 	Attribute<name: 13, data: [0, 14]>

@@ -59,9 +59,9 @@ Fields[2]:
 	Field<flags: 0x01, name: 13, descriptor: 14>
 	Field<flags: 0x01, name: 17, descriptor: 18>
 Methods[2]:
-	Field<flags: 0x01, name: 5, descriptor: 6>
+	Method<flags: 0x01, name: 5, descriptor: 6>
 		Attribute<name: 33, data: [0, 2, 0, 1, 0, 0, 0, 16, 42, 183, 0, 1, 42, 18, 7, 181, 0, 9, 42, 4, 181, 0, 15, 177, 0, 0, 0, 1, 0, 34, 0, 0, 0, 14, 0, 3, 0, 0, 0, 1, 0, 4, 0, 2, 0, 10, 0, 3]>
-	Field<flags: 0x01, name: 31, descriptor: 32>
+	Method<flags: 0x01, name: 31, descriptor: 32>
 		Attribute<name: 33, data: [0, 3, 0, 2, 0, 0, 0, 40, 42, 89, 180, 0, 15, 27, 104, 181, 0, 15, 42, 27, 184, 0, 19, 42, 180, 0, 9, 186, 0, 25, 0, 0, 181, 0, 9, 27, 4, 164, 0, 10, 42, 27, 4, 100, 182, 0, 29, 177, 0, 0, 0, 2, 0, 34, 0, 0, 0, 22, 0, 5, 0, 0, 0, 5, 0, 10, 0, 6, 0, 27, 0, 7, 0, 32, 0, 8, 0, 39, 0, 10, 0, 35, 0, 0, 0, 3, 0, 1, 39]>
 Attributes[3]:
 	Attribute<name: 36, data: [0, 37]>

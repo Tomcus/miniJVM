@@ -10,6 +10,8 @@
 
 #include <fmt/format.h>
 
+#include "class/base.hpp"
+
 namespace jvm {
 
 class ConstPool {
@@ -33,8 +35,6 @@ public:
         Module = 0x13,
         Package = 0x14
     };
-
-    using Index = std::uint16_t;
 
     struct NameAndType {
         Index name;

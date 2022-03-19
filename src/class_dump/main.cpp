@@ -113,6 +113,15 @@ void dumpFields(const jvm::Fields& fields, std::ostream& output) {
     }
 }
 
+void dumpMethods(const jvm::Methods& methods, std::ostream& output) {
+    for (const auto& method: methods) {
+        output << fmt::format("\tMethod<flags: {:#04x}, name: {}, descriptor: {}>\n", method.flags, method.nameIndex, method.descriptorIndex);
+        for (const auto& attribute: method.attributes) {
+            output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", attribute.attrNameIndex, fmt::join(attribute.data, ", "));
+        }
+    }
+}
+
 void dumpAttribute(const jvm::Attributes& attributes, std::ostream& output) {
     for (const auto& attribute: attributes) {
         output << fmt::format("\tAttribute<name: {}, data: [{}]>\n", attribute.attrNameIndex, fmt::join(attribute.data, ", "));
@@ -131,7 +140,7 @@ void dumpClassFile(const std::filesystem::path& pathToClass, std::ostream& outpu
     output << "Fields[" << classFile.fields.size() << "]:\n";
     dumpFields(classFile.fields, output);
     output << "Methods[" << classFile.methods.size() << "]:\n";
-    dumpFields(classFile.methods, output);
+    dumpMethods(classFile.methods, output);
     output << "Attributes[" << classFile.attributes.size() << "]:\n";
     dumpAttribute(classFile.attributes, output);
 }

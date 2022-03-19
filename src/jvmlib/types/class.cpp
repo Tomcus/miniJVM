@@ -23,7 +23,7 @@ Attributes read(std::istream& in) {
     attrs.reserve(attrsCount);
     for (std::size_t i = 0; i < attrsCount; ++i) {
         Attribute attr;
-        attr.attrNameIndex = read<ConstPool::Index>(in);
+        attr.attrNameIndex = read<Index>(in);
         const auto attrDataLength = read<std::uint32_t>(in);
         attr.data.resize(attrDataLength);
         if (attrDataLength > 0) {
@@ -42,12 +42,28 @@ Fields read(std::istream& in) {
     for (std::size_t i = 0; i < fieldsCount; ++i) {
         fields.emplace_back(Field{
             .flags = read<std::uint16_t>(in),
-            .nameIndex = read<ConstPool::Index>(in),
-            .descriptorIndex = read<ConstPool::Index>(in),
+            .nameIndex = read<Index>(in),
+            .descriptorIndex = read<Index>(in),
             .attributes = read<Attributes>(in)
         });
     }
     return fields;
+}
+
+template<>
+Methods read(std::istream& in) {
+    std::vector<Method> methods;
+    const auto methodsCount = read<std::uint16_t>(in);
+    methods.reserve(methodsCount);
+    for (std::size_t i = 0; i < methodsCount; ++i) {
+        methods.emplace_back(Method{
+            .flags = read<std::uint16_t>(in),
+            .nameIndex = read<Index>(in),
+            .descriptorIndex = read<Index>(in),
+            .attributes = read<Attributes>(in)
+        });
+    }
+    return methods;
 }
 
 Class Class::load(const std::filesystem::path& path) {
@@ -65,11 +81,11 @@ Class Class::load(const std::filesystem::path& path) {
     res.readVersion(file);
     res.constPool = ConstPool::load(file);
     res.accessFlags = read<Class::AccessFlags>(file);
-    res.thisClass = read<ConstPool::Index>(file);
-    res.superClass = read<ConstPool::Index>(file);
+    res.thisClass = read<Index>(file);
+    res.superClass = read<Index>(file);
     res.readInterfaces(file);
     res.fields = read<Fields>(file);
-    res.methods = read<Fields>(file);
+    res.methods = read<Methods>(file);
     res.attributes = read<Attributes>(file);
 
     int eofCheck;
@@ -91,7 +107,7 @@ void Class::readInterfaces(std::istream& in) {
     const auto interfaceCount = read<std::uint16_t>(in);
     interfaces.reserve(interfaceCount);
     for (std::size_t i = 0; i < interfaceCount; ++i) {
-        interfaces.push_back(read<ConstPool::Index>(in));
+        interfaces.push_back(read<Index>(in));
     }
 }
 

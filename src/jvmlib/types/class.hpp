@@ -3,6 +3,9 @@
 
 #include "basic.hpp"
 #include "const_pool.hpp"
+#include "class/attribute.hpp"
+#include "class/field.hpp"
+#include "class/method.hpp"
 
 #include <cstdint>
 #include <stdexcept>
@@ -17,22 +20,7 @@ struct ver16 {
     std::uint16_t minor;
 };
 
-struct Attribute {
-    ConstPool::Index attrNameIndex;
-    std::vector<Byte> data;
-};
-
-using Attributes = std::vector<Attribute>;
-
-struct Field {
-    std::uint16_t flags;
-    ConstPool::Index nameIndex;
-    ConstPool::Index descriptorIndex;
-    Attributes attributes;
-};
-
-using Fields = std::vector<jvm::Field>;
-using Interfaces = std::vector<ConstPool::Index>;
+using Interfaces = std::vector<Index>;
 
 class Class {
 public:
@@ -54,17 +42,16 @@ public:
     ver16 version;
     ConstPool constPool;
     AccessFlags accessFlags;
-    ConstPool::Index thisClass;
-    ConstPool::Index superClass;
+    Index thisClass;
+    Index superClass;
     Interfaces interfaces;
     Fields fields;
-    Fields methods;
+    Methods methods;
     Attributes attributes;
 
 protected:
 
     void readVersion(std::istream& in);
-    void readConstPool(std::istream& in);
     void readInterfaces(std::istream& in);
 };
 
