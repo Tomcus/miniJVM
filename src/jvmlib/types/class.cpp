@@ -1,4 +1,5 @@
 #include "class.hpp"
+#include "class/base.hpp"
 #include "const_pool.hpp"
 #include "serialization.hpp"
 #include "utils.hpp"
@@ -12,58 +13,8 @@
 namespace jvm {
 
 template<>
-Class::AccessFlags read(std::istream& in) {
-    return static_cast<Class::AccessFlags>(read<std::uint16_t>(in));
-}
-
-template<>
-Attributes read(std::istream& in) {
-    Attributes attrs;
-    const auto attrsCount = read<std::uint16_t>(in);
-    attrs.reserve(attrsCount);
-    for (std::size_t i = 0; i < attrsCount; ++i) {
-        Attribute attr;
-        attr.attrNameIndex = read<Index>(in);
-        const auto attrDataLength = read<std::uint32_t>(in);
-        attr.data.resize(attrDataLength);
-        if (attrDataLength > 0) {
-            in.read(reinterpret_cast<char *>(attr.data.data()), attrDataLength);
-        }
-        attrs.emplace_back(std::move(attr));
-    }
-    return attrs;
-}
-
-template<>
-Fields read(std::istream& in) {
-    std::vector<Field> fields;
-    const auto fieldsCount = read<std::uint16_t>(in);
-    fields.reserve(fieldsCount);
-    for (std::size_t i = 0; i < fieldsCount; ++i) {
-        fields.emplace_back(Field{
-            .flags = read<std::uint16_t>(in),
-            .nameIndex = read<Index>(in),
-            .descriptorIndex = read<Index>(in),
-            .attributes = read<Attributes>(in)
-        });
-    }
-    return fields;
-}
-
-template<>
-Methods read(std::istream& in) {
-    std::vector<Method> methods;
-    const auto methodsCount = read<std::uint16_t>(in);
-    methods.reserve(methodsCount);
-    for (std::size_t i = 0; i < methodsCount; ++i) {
-        methods.emplace_back(Method{
-            .flags = read<std::uint16_t>(in),
-            .nameIndex = read<Index>(in),
-            .descriptorIndex = read<Index>(in),
-            .attributes = read<Attributes>(in)
-        });
-    }
-    return methods;
+AccessFlags read(std::istream& in) {
+    return static_cast<AccessFlags>(read<std::uint16_t>(in));
 }
 
 Class Class::load(const std::filesystem::path& path) {
@@ -80,13 +31,13 @@ Class Class::load(const std::filesystem::path& path) {
     
     res.readVersion(file);
     res.constPool = ConstPool::load(file);
-    res.accessFlags = read<Class::AccessFlags>(file);
-    res.thisClass = read<Index>(file);
-    res.superClass = read<Index>(file);
+    res.accessFlags = read<AccessFlags>(file);
+    res.thisClass = res.constPool.getRef<ConstPool::ClassInfo>(read<Index>(file));
+    res.superClass = res.constPool.getRef<ConstPool::ClassInfo>(read<Index>(file));
     res.readInterfaces(file);
-    res.fields = read<Fields>(file);
-    res.methods = read<Methods>(file);
-    res.attributes = read<Attributes>(file);
+    res.readFields(file);
+    res.readMethods(file);
+    res.attributes = res.readAttributes(file);
 
     int eofCheck;
     file >> eofCheck;
@@ -107,20 +58,61 @@ void Class::readInterfaces(std::istream& in) {
     const auto interfaceCount = read<std::uint16_t>(in);
     interfaces.reserve(interfaceCount);
     for (std::size_t i = 0; i < interfaceCount; ++i) {
-        interfaces.push_back(read<Index>(in));
+        interfaces.emplace_back(constPool.getRef<ConstPool::ClassInfo>(read<Index>(in)));
     }
 }
 
 std::string_view Class::getClassName() const {
-    const auto& thisClassInfo = constPool.get<ConstPool::ClassInfo>(thisClass);
-    const auto& stringClassName = constPool.get<std::string>(thisClassInfo.name);
+    const std::string& stringClassName = constPool.getRef<std::string>(thisClass->name);
     return stringClassName;
 }
 
 std::string_view Class::getParentClassName() const {
-    const auto& superClassInfo = constPool.get<ConstPool::ClassInfo>(superClass);
-    const auto& stringClassName = constPool.get<std::string>(superClassInfo.name);
+    const std::string& stringClassName = constPool.getRef<std::string>(superClass->name);
     return stringClassName;
+}
+
+Attributes Class::readAttributes(std::istream& in) {
+    Attributes attrs;
+    const auto attrsCount = read<std::uint16_t>(in);
+    attrs.reserve(attrsCount);
+    for (std::size_t i = 0; i < attrsCount; ++i) {
+        Attribute attr;
+        attr.name = constPool.getRef<std::string>(read<Index>(in));
+        const auto attrDataLength = read<std::uint32_t>(in);
+        attr.data.resize(attrDataLength);
+        if (attrDataLength > 0) {
+            in.read(reinterpret_cast<char *>(attr.data.data()), attrDataLength);
+        }
+        attrs.emplace_back(attr);
+    }
+    return attrs;
+}
+
+void Class::readFields(std::istream& in) {
+    const auto fieldsCount = read<std::uint16_t>(in);
+    fields.reserve(fieldsCount);
+    for (std::size_t i = 0; i < fieldsCount; ++i) {
+        fields.emplace_back(Field(
+            read<jvm::AccessFlags>(in),
+            constPool.getRef<std::string>(read<Index>(in)),
+            read<Index>(in),
+            readAttributes(in)
+        ));
+    }
+}
+
+void Class::readMethods(std::istream& in) {
+    const auto methodsCount = read<std::uint16_t>(in);
+    methods.reserve(methodsCount);
+    for (std::size_t i = 0; i < methodsCount; ++i) {
+        methods.emplace_back(Method{
+            .flags = read<std::uint16_t>(in),
+            .name = constPool.getRef<std::string>(read<Index>(in)),
+            .descriptorIndex = read<Index>(in),
+            .attributes = readAttributes(in)
+        });
+    }
 }
 
 }

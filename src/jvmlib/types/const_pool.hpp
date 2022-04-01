@@ -11,6 +11,7 @@
 #include <fmt/format.h>
 
 #include "class/base.hpp"
+#include "utils/ref.hpp"
 
 namespace jvm {
 
@@ -92,11 +93,11 @@ public:
     const Value& operator[](const std::size_t index) const;
 
     template<typename Type>
-    const Type& get(const std::size_t index) const {
+    ConstRef<Type> getRef(const std::size_t index) const {
         validateIndex(index);
         auto& object = data[index - 1];
         if (std::holds_alternative<Type>(object)) {
-            return std::get<Type>(object);
+            return const_cast<Type &>(std::get<Type>(object));
         }
         throw Error{fmt::format("Const pool value at index {}, doesn't hold type: {}", index, typeid(Type).name())};
     }

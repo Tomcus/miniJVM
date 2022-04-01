@@ -23,7 +23,7 @@ TEST_CASE("Basic reference tests", "[ref]") {
         TestStruct {3, 3.0f, "3"}
     };
 
-    jvm::Ref<TestStruct> ref = testData[1];
+    jvm::ConstRef<TestStruct> ref = testData[1];
     REQUIRE(ref->a == testData[1].a);
     REQUIRE(ref->a == 2);
     REQUIRE(ref->b == testData[1].b);
@@ -40,6 +40,6 @@ TEST_CASE("Basic reference tests", "[ref]") {
 
     validate(ref);
 
-    jvm::Ref<TestStruct> other = ref;
+    jvm::ConstRef<TestStruct> other = ref;
     validate(other);
 }

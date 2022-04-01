@@ -2,11 +2,12 @@
 #define MINI_JVM_TYPES_CLASS_METHOD_HPP
 
 #include "attribute.hpp"
+#include "types/const_pool.hpp"
 
 namespace jvm {
     struct Method {
         std::uint16_t flags;
-        Index nameIndex;
+        jvm::ConstRef<std::string> name;
         Index descriptorIndex;
         Attributes attributes;
     };

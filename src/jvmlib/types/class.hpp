@@ -6,6 +6,7 @@
 #include "class/attribute.hpp"
 #include "class/field.hpp"
 #include "class/method.hpp"
+#include "utils/ref.hpp"
 
 #include <cstdint>
 #include <stdexcept>
@@ -20,19 +21,11 @@ struct ver16 {
     std::uint16_t minor;
 };
 
-using Interfaces = std::vector<Index>;
+using Interfaces = std::vector<ConstRef<ConstPool::ClassInfo>>;
 
 class Class {
 public:
     constexpr static std::uint16_t MIN_CLASS_FILE_FORMAT_MAJOR_VERSION = 55;
-
-    enum class AccessFlags: std::uint16_t {
-        ACC_PUBLIC = 0x001,
-        ACC_FINAL = 0x010,
-        ACC_SUPER = 0x020,
-        ACC_INTERFACE = 0x200,
-        ACC_ABSTRACT = 0x400
-    };
 
     static Class load(const std::filesystem::path& path);
 
@@ -42,8 +35,8 @@ public:
     ver16 version;
     ConstPool constPool;
     AccessFlags accessFlags;
-    Index thisClass;
-    Index superClass;
+    ConstRef<ConstPool::ClassInfo> thisClass;
+    ConstRef<ConstPool::ClassInfo> superClass;
     Interfaces interfaces;
     Fields fields;
     Methods methods;
@@ -53,6 +46,9 @@ protected:
 
     void readVersion(std::istream& in);
     void readInterfaces(std::istream& in);
+    void readFields(std::istream& in);
+    void readMethods(std::istream& in);
+    Attributes readAttributes(std::istream& in);
 };
 
 class ReadingError: public std::runtime_error {

@@ -1,7 +1,9 @@
 #include "types.hpp"
 
+#include <algorithm>
 #include <exception>
 #include <filesystem>
+#include <iterator>
 #include <optional>
 #include <fstream>
 #include <iostream>
@@ -98,45 +100,50 @@ void dumpConstPool(const jvm::ConstPool& constPool, std::ostream& output) {
     }
 }
 
-void dumpInterfaces(const jvm::Interfaces& interfaces, std::ostream& output) {
-    for (const auto& interface: interfaces) {
-        output << "\tInterface<index: " << interface << ">\n";
+void dumpInterfaces(const jvm::ConstPool& cp, const jvm::Interfaces& interfaces, std::ostream& output) {
+    if (interfaces.size() > 0) {
+        output << "implements ";
+        std::vector<std::string> interfacesStrings;
+        std::transform(interfaces.cbegin(), interfaces.cend(), std::back_inserter(interfacesStrings), [&](const auto& interface) {
+            return cp.getRef<std::string>(interface->name);
+        });
+        output << fmt::format("{}", fmt::join(interfacesStrings, ", "));
+        output << '\n';
     }
 }
 
 void dumpFields(const jvm::Fields& fields, std::ostream& output) {
     for (const auto& field: fields) {
-        output << fmt::format("\tField<flags: {:#04x}, name: {}, descriptor: {}>\n", field.flags, field.nameIndex, field.descriptorIndex);
+        output << fmt::format("\tField<flags: {:#04x}, name: {}, descriptor: {}>\n", static_cast<std::uint16_t>(field.flags), std::string(field.name), field.descriptorIndex);
         for (const auto& attribute: field.attributes) {
-            output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", attribute.attrNameIndex, fmt::join(attribute.data, ", "));
+            output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", std::string(attribute.name), fmt::join(attribute.data, ", "));
         }
     }
 }
 
 void dumpMethods(const jvm::Methods& methods, std::ostream& output) {
     for (const auto& method: methods) {
-        output << fmt::format("\tMethod<flags: {:#04x}, name: {}, descriptor: {}>\n", method.flags, method.nameIndex, method.descriptorIndex);
+        output << fmt::format("\tMethod<flags: {:#04x}, name: {}, descriptor: {}>\n", method.flags, std::string(method.name), method.descriptorIndex);
         for (const auto& attribute: method.attributes) {
-            output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", attribute.attrNameIndex, fmt::join(attribute.data, ", "));
+            output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", std::string(attribute.name), fmt::join(attribute.data, ", "));
         }
     }
 }
 
 void dumpAttribute(const jvm::Attributes& attributes, std::ostream& output) {
     for (const auto& attribute: attributes) {
-        output << fmt::format("\tAttribute<name: {}, data: [{}]>\n", attribute.attrNameIndex, fmt::join(attribute.data, ", "));
+        output << fmt::format("\tAttribute<name: {}, data: [{}]>\n", std::string(attribute.name), fmt::join(attribute.data, ", "));
     }
 }
 
 void dumpClassFile(const std::filesystem::path& pathToClass, std::ostream& output = std::cout) {
     auto classFile = jvm::Class::load(pathToClass);
     output << "Class " << classFile.getClassName() << " extends " << classFile.getParentClassName() << "\n";
+    dumpInterfaces(classFile.constPool, classFile.interfaces, output);
     output << "v." << classFile.version.major << "." << classFile.version.minor << "\n";
     output << "======================\n";
     output << "ConstPool[" << classFile.constPool.size() << "]:\n";
     dumpConstPool(classFile.constPool, output);
-    output << "Interfaces[" << classFile.interfaces.size() << "]:\n";
-    dumpInterfaces(classFile.interfaces, output);
     output << "Fields[" << classFile.fields.size() << "]:\n";
     dumpFields(classFile.fields, output);
     output << "Methods[" << classFile.methods.size() << "]:\n";

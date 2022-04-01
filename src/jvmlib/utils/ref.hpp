@@ -4,17 +4,23 @@
 namespace jvm {
 
 template<typename Type>
-struct Ref {
-    Ref(): ptr(nullptr) { }
-    Ref(Type& other): ptr(&other) { }
-    Ref(Ref<Type>& other): ptr(other.ptr) { }
+struct ConstRef {
+    ConstRef(): ptr(nullptr) { }
+    ConstRef(Type& other): ptr(&other) { }
+    ConstRef(ConstRef<Type>& other): ptr(other.ptr) { }
+    ConstRef(ConstRef<Type>&& other): ptr(other.ptr) { }
 
-    inline Ref<Type>& operator=(Type& other) {
+    inline ConstRef<Type>& operator=(Type& other) {
         ptr = &other;
         return *this;
     }
 
-    inline Ref<Type>& operator=(Ref<Type>& other) {
+    inline ConstRef<Type>& operator=(ConstRef<Type>& other) {
+        ptr = other.ptr;
+        return *this;
+    }
+
+    inline ConstRef<Type>& operator=(ConstRef<Type>&& other) {
         ptr = other.ptr;
         return *this;
     }
