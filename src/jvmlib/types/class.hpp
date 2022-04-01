@@ -48,7 +48,7 @@ protected:
     void readInterfaces(std::istream& in);
     void readFields(std::istream& in);
     void readMethods(std::istream& in);
-    Attributes readAttributes(std::istream& in);
+    Attributes readAttributes(std::istream& in) const;
 };
 
 class ReadingError: public std::runtime_error {

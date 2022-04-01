@@ -101,7 +101,7 @@ void dumpConstPool(const jvm::ConstPool& constPool, std::ostream& output) {
 }
 
 void dumpInterfaces(const jvm::ConstPool& cp, const jvm::Interfaces& interfaces, std::ostream& output) {
-    if (interfaces.size() > 0) {
+    if (!interfaces.empty()) {
         output << "implements ";
         std::vector<std::string> interfacesStrings;
         std::transform(interfaces.cbegin(), interfaces.cend(), std::back_inserter(interfacesStrings), [&](const auto& interface) {

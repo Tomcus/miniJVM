@@ -1,5 +1,7 @@
-#include "types.hpp"
 #include <spdlog/spdlog.h>
+#include <exception>
+#include <spdlog/common.h>
+#include "types/class.hpp"
 
 int main() {
     spdlog::set_level(spdlog::level::debug);

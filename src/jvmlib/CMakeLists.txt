@@ -16,6 +16,4 @@ target_add_unit_tests(TARGET jvmlib FILES
     types/class/attribute.unit.cpp
 )
 
-if (CLANG_TIDY)
-    set_property(TARGET jvmlib PROPERTY CXX_CLANG_TIDY ${CLANG_TIDY_OPITONS})
-endif()
+target_add_static_analyzers(jvmlib)

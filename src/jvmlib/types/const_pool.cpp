@@ -80,8 +80,10 @@ ConstPool::InvokeDynamic read(std::istream & in) {
 
 template<>
 ConstPool::MethodHandle::Type read(std::istream& in) {
+    constexpr static std::uint8_t minValue = 1;
+    constexpr static std::uint8_t maxValue = 9;
     const auto val = read<std::uint8_t>(in);
-    check<ConstPool::Error>(val >= 1 && val <= 9, "MethodHandle kind should be value between 1 and 9");
+    check<ConstPool::Error>(val >= minValue && val <= maxValue, "MethodHandle kind should be value between 1 and 9");
     return static_cast<ConstPool::MethodHandle::Type>(val);
 }
 
@@ -103,10 +105,12 @@ const ConstPool::Value& ConstPool::operator[](const std::size_t index) const {
 }
 
 void ConstPool::validateIndex(const std::size_t index) const {
-    if (index == 0)
+    if (index == 0) {
         throw std::out_of_range("Const pool is indexed from 1. 0 shouldn't be accessed.");
-    if (index > data.size())
+    }
+    if (index > data.size()) {
         throw std::out_of_range(fmt::format("Const pool index [{}] out of range (max is {})", index, data.size()));
+    }
 }
 
 void ConstPool::loadInstance(std::istream& in) {

@@ -72,7 +72,7 @@ std::string_view Class::getParentClassName() const {
     return stringClassName;
 }
 
-Attributes Class::readAttributes(std::istream& in) {
+Attributes Class::readAttributes(std::istream& in) const {
     Attributes attrs;
     const auto attrsCount = read<std::uint16_t>(in);
     attrs.reserve(attrsCount);

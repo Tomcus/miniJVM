@@ -35,7 +35,7 @@ inline const std::string_view getIStreamErrorString(const std::istream& in) {
         return "End of file reached.";
     }
     if (in.fail()) {
-        return "Rocoverable error reached. Wrong data format read.";
+        return "Recoverable error reached. Wrong data format read.";
     }
     if (in.bad()) {
         return "Unrecoverable error reached.";

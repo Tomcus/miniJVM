@@ -5,6 +5,4 @@ target_link_libraries(jvm
     jvmlib
 )
 
-if (CLANG_TIDY)
-    set_property(TARGET jvm PROPERTY CXX_CLANG_TIDY ${CLANG_TIDY_OPITONS})
-endif()
+target_add_static_analyzers(jvm)
