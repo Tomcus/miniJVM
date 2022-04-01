@@ -68,14 +68,13 @@ ConstPool[66]:
 	64: ClassInfo<name: 65>
 	65: String<"java/lang/invoke/MethodHandles">
 	66: String<"Lookup">
-Interfaces[0]:
 Fields[0]:
 Methods[2]:
-	Method<flags: 0x01, name: 5, descriptor: 6>
-		Attribute<name: 46, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 47, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
-	Method<flags: 0x09, name: 48, descriptor: 49>
-		Attribute<name: 46, data: [0, 3, 0, 2, 0, 0, 0, 37, 187, 0, 7, 89, 183, 0, 9, 76, 43, 16, 10, 182, 0, 10, 178, 0, 14, 43, 180, 0, 20, 43, 180, 0, 24, 184, 0, 28, 186, 0, 34, 0, 0, 182, 0, 38, 177, 0, 0, 0, 1, 0, 47, 0, 0, 0, 18, 0, 4, 0, 0, 0, 3, 0, 8, 0, 4, 0, 14, 0, 5, 0, 36, 0, 6]>
+	Method<flags: 0x01, name: <init>, descriptor: 6>
+		Attribute<name: Code, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 47, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
+	Method<flags: 0x09, name: main, descriptor: 49>
+		Attribute<name: Code, data: [0, 3, 0, 2, 0, 0, 0, 37, 187, 0, 7, 89, 183, 0, 9, 76, 43, 16, 10, 182, 0, 10, 178, 0, 14, 43, 180, 0, 20, 43, 180, 0, 24, 184, 0, 28, 186, 0, 34, 0, 0, 182, 0, 38, 177, 0, 0, 0, 1, 0, 47, 0, 0, 0, 18, 0, 4, 0, 0, 0, 3, 0, 8, 0, 4, 0, 14, 0, 5, 0, 36, 0, 6]>
 Attributes[3]:
-	Attribute<name: 50, data: [0, 51]>
-	Attribute<name: 52, data: [0, 1, 0, 53, 0, 1, 0, 59]>
-	Attribute<name: 61, data: [0, 1, 0, 62, 0, 64, 0, 66, 0, 25]>
+	Attribute<name: SourceFile, data: [0, 51]>
+	Attribute<name: BootstrapMethods, data: [0, 1, 0, 53, 0, 1, 0, 59]>
+	Attribute<name: InnerClasses, data: [0, 1, 0, 62, 0, 64, 0, 66, 0, 25]>
