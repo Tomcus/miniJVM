@@ -5,7 +5,7 @@ add_executable(class_dump
 target_link_libraries(class_dump
     project_settings
     lyra
-    jvmlib
+    minijvm
 )
 
 target_add_static_analyzers(class_dump)
