@@ -7,8 +7,7 @@ target_include_directories(minijvm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(minijvm PUBLIC
     project_settings
-    fmt
-    spdlog
+    CONAN_PKG::fmt
 )
 
 target_add_unit_tests(TARGET minijvm FILES

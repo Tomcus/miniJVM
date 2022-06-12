@@ -1,0 +1,3 @@
+[requires]
+fmt/8.1.1
+lyra/1.6.0

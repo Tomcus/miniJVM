@@ -18,7 +18,6 @@
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #include <lyra/lyra.hpp>
 #include <fmt/format.h>
-#include <spdlog/spdlog.h>
 #pragma GCC diagnostic pop
 
 template <typename Type>
@@ -160,7 +159,7 @@ int main(int argc, const char* argv[]) {
         | lyra::opt(outputFile, "Output file")["-o"]["--output"]("output file where to create the dump");
     auto res = cli.parse({argc, argv});
     if (!res) {
-        spdlog::error("Unable to parse command line arguments. {}", res.message());
+        // spdlog::error("Unable to parse command line arguments. {}", res.message());
         return -1;
     }
 
@@ -172,7 +171,7 @@ int main(int argc, const char* argv[]) {
             dumpClassFile(classFile, std::cout);
         }
     } catch (std::exception& exc) {
-        spdlog::error("Exception occurred: {}", exc.what());
+        // spdlog::error("Exception occurred: {}", exc.what());
         return -2;
     }
 
