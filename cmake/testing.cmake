@@ -1,20 +1,6 @@
-find_package(Catch2 3 QUIET)
-
-include(FetchContent)
-
-if(NOT Catch2_FOUND)
-	
-	FetchContent_Declare(
-		Catch2
-		GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-		GIT_TAG        v3.0.0-preview4
-	)
-    FetchContent_MakeAvailable(Catch2)
-endif()
-
 add_library(test_base_with_main INTERFACE)
 
-target_link_libraries(test_base_with_main INTERFACE project_settings Catch2::Catch2WithMain)
+target_link_libraries(test_base_with_main INTERFACE project_settings CONAN_PKG::catch2)
 
 set(UNIT_TEST_SOURCES "" CACHE INTERNAL "UNIT_TEST_SOURCES")
 set(UNIT_TEST_DEPENDENCIES "" CACHE INTERNAL "UNIT_TEST_DEPENDENCIES")
