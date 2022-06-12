@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 #include <fmt/format.h>
+#include <fmt/core.h>
 
 namespace jvm {
 
@@ -58,7 +59,7 @@ ReturnType read(std::istream& in) {
         res = res << 8;
         res += static_cast<std::uint8_t>(readBuffer[i]);
     }
-    // spdlog::debug("Read {}-bytes unsigned integer with value: {:#04x}", sizeof(ReturnType), res);
+    // fmt::print("Read {}-bytes unsigned integer with value: {:#04x}", sizeof(ReturnType), res);
     return res;
 }
 

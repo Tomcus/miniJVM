@@ -3,6 +3,7 @@
 #include "serialization.hpp"
 
 #include <cstdint>
+#include <fmt/core.h>
 #include <istream>
 #include <stdexcept>
 #include <variant>
@@ -118,7 +119,7 @@ void ConstPool::loadInstance(std::istream& in) {
     check<Error>(constPoolMaxIndex != 0, "Const poll max index should be bigger then 0");
     dataSize = constPoolMaxIndex - 1;
     if (dataSize == 0) {
-        // spdlog::warn("Empty constpool");
+        fmt::print("Empty constpool");
         return;
     }
 
