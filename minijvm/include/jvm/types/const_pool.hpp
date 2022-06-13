@@ -10,8 +10,8 @@
 
 #include <fmt/format.h>
 
-#include "class/base.hpp"
-#include "utils/ref.hpp"
+#include "jvm/types/class/base.hpp"
+#include "jvm/utils/ref.hpp"
 
 namespace jvm {
 

@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-#include "types/class/base.hpp"
+#include "jvm/types/class/base.hpp"
 
 namespace jvm {
 

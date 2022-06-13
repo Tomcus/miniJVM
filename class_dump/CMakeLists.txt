@@ -1,5 +1,5 @@
 add_executable(class_dump
-    main.cpp
+    src/main.cpp
 )
 
 target_link_libraries(class_dump

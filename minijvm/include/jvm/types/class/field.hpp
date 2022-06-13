@@ -1,7 +1,7 @@
 #ifndef MINI_JVM_TYPES_CLASS_FIELD_HPP
 #define MINI_JVM_TYPES_CLASS_FIELD_HPP
 
-#include "types/class/class_field.hpp"
+#include "jvm/types/class/class_field.hpp"
 
 namespace jvm {
     struct Field : public jvm::ClassField {

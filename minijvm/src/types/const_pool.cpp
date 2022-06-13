@@ -1,6 +1,6 @@
-#include "const_pool.hpp"
-#include "utils.hpp"
-#include "serialization.hpp"
+#include "jvm/types/const_pool.hpp"
+#include "jvm/utils.hpp"
+#include "jvm/types/serialization.hpp"
 
 #include <cstdint>
 #include <fmt/core.h>

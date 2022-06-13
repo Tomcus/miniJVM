@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "base.hpp"
-#include "types/const_pool.hpp"
+#include "jvm/types/class/base.hpp"
+#include "jvm/types/const_pool.hpp"
 
 namespace jvm {
     struct Attribute {

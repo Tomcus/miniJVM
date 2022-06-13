@@ -1,5 +1,5 @@
 #include <exception>
-#include "types/class.hpp"
+#include "jvm/types/class.hpp"
 
 int main() {
     try {

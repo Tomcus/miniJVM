@@ -2,7 +2,7 @@
 #define MINI_JVM_TYPES_CLASS_METHOD_HPP
 
 #include "attribute.hpp"
-#include "types/const_pool.hpp"
+#include "jvm/types/const_pool.hpp"
 
 namespace jvm {
     struct Method {

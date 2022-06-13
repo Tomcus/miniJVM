@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "types/class/attribute.hpp"
+#include "jvm/types/class/attribute.hpp"
 
 TEST_CASE("Test if vector of Attributes can be copied") {
     std::string name1 = "foo";

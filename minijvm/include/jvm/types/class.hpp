@@ -1,12 +1,12 @@
 #ifndef MINI_JVM_TYPES_CLASS_HPP
 #define MINI_JVM_TYPES_CLASS_HPP
 
-#include "basic.hpp"
-#include "const_pool.hpp"
-#include "class/attribute.hpp"
-#include "class/field.hpp"
-#include "class/method.hpp"
-#include "utils/ref.hpp"
+#include "jvm/types/basic.hpp"
+#include "jvm/types/const_pool.hpp"
+#include "jvm/types/class/attribute.hpp"
+#include "jvm/types/class/field.hpp"
+#include "jvm/types/class/method.hpp"
+#include "jvm/utils/ref.hpp"
 
 #include <cstdint>
 #include <stdexcept>

@@ -1,8 +1,8 @@
-#include "class.hpp"
-#include "class/base.hpp"
-#include "const_pool.hpp"
-#include "serialization.hpp"
-#include "utils.hpp"
+#include "jvm/types/class.hpp"
+#include "jvm/types/class/base.hpp"
+#include "jvm/types/const_pool.hpp"
+#include "jvm/types/serialization.hpp"
+#include "jvm/utils.hpp"
 
 #include <cstdint>
 #include <fstream>
