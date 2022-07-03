@@ -6,8 +6,6 @@ jobs:
     steps:
       - name: Get cmake
         uses: lukka/get-cmake@latest
-      - name: Get g++
-        uses: egor-tensin/setup-gcc@v1
       - name: Get conan
         uses: turtlebrowser/get-conan@main
       - name: Checkout branch
@@ -15,4 +13,4 @@ jobs:
       - name: Make build directory
         run: mkdir -p build
       - name: Run cmake - configuration
-        run: cmake -DCMAKE_BUILD_TYPE=Debug -S. -B./build -G Ninja
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++ -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc -S. -B./build -G Ninja
