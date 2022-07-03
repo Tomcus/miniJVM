@@ -1,7 +1,9 @@
-find_package(Doxygen REQUIRED dot)
+find_package(Doxygen QUIET COMPONENTS dot)
 
-doxygen_add_docs(
-    docs
-    ${PROJECT_SOURCE_DIR}/src
-    COMMENT "Generate project documentation"
-)
+if (${Doxygen_FOUND})
+    doxygen_add_docs(
+        docs
+        ${PROJECT_SOURCE_DIR}/src
+        COMMENT "Generate project documentation"
+    )
+endif()
