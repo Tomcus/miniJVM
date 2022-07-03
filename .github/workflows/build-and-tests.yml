@@ -21,4 +21,4 @@ jobs:
       - name: Compile
         run: cd build && ninja
       - name: Test
-        run: ctest --output-on-failure 
+        run: cd build/tests && ctest --output-on-failure 
