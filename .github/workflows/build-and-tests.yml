@@ -6,6 +6,10 @@ jobs:
     steps:
       - name: Get cmake
         uses: lukka/get-cmake@latest
+      - name: Install newer g++
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: 11
       - name: Get conan
         uses: turtlebrowser/get-conan@main
       - name: Checkout branch
@@ -13,7 +17,7 @@ jobs:
       - name: Make build directory
         run: mkdir -p build
       - name: Configure
-        run: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++ -S. -B./build -G Ninja
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++-11 -S. -B./build -G Ninja
       - name: Compile
         run: cd build && ninja
       - name: Test
