@@ -1,0 +1,16 @@
+name: build-and-test
+on: [push]
+jobs:
+  build-debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get cmake
+        uses: lukka/get-cmake@latest
+      - name: Get conan
+        uses: turtlebrowser/get-conan@main
+      - name: Checkout branch
+        uses: actions/checkout@v3
+      - name: Make build directory
+        run: mkdir -p build
+      - name: Run cmake - configuration
+        run: cmake -DCMAKE_BUILD_TYPE=Release -S. -B./build -G Ninja
