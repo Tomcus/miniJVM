@@ -1,17 +1,17 @@
-#ifndef MINI_JVM_LIB_UTILS_REF_HPP
-#define MINI_JVM_LIB_UTILS_REF_HPP
+#pragma once
 
 namespace jvm {
 
 template<typename Type>
-struct ConstRef {
+class ConstRef {
+public:
     ConstRef(): ptr(nullptr) { }
-    ConstRef(Type& other): ptr(&other) { }
+    ConstRef(const Type& other): ptr(&const_cast<Type &>(other)) { }
     ConstRef(ConstRef<Type>& other): ptr(other.ptr) { }
     ConstRef(ConstRef<Type>&& other): ptr(other.ptr) { }
 
-    inline ConstRef<Type>& operator=(Type& other) {
-        ptr = &other;
+    inline ConstRef<Type>& operator=(const Type& other) {
+        ptr = &const_cast<Type&>(other);
         return *this;
     }
 
@@ -44,6 +44,39 @@ protected:
     Type* ptr;
 };
 
-}
+template<typename Type>
+class Ref: public ConstRef<Type> {
+public:
+    Ref(): ConstRef<Type>() { }
+    Ref(Type& other): ConstRef<Type>(other) { }
+    Ref(Ref<Type>& other): ConstRef<Type>(other)  { }
+    Ref(Ref<Type>&& other): ConstRef<Type>(other)  { }
+    
+    inline Ref<Type>& operator=(const Type& other) {
+        this->ptr = &const_cast<Type&>(other);
+        return *this;
+    }
 
-#endif//MINI_JVM_LIB_UTILS_REF_HPP
+    inline Ref<Type>& operator=(Ref<Type>& other) {
+        this->ptr = other.ptr;
+        return *this;
+    }
+
+    inline Ref<Type>& operator=(Ref<Type>&& other) {
+        this->ptr = other.ptr;
+        return *this;
+    }
+
+    inline Type* operator->() {
+        return this->ptr;
+    }
+
+    inline Type* operator*() {
+        return this->ptr;
+    }
+
+    inline operator Type&() {
+        return *this->ptr;
+    }
+};
+}

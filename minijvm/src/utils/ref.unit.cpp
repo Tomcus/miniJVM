@@ -16,7 +16,11 @@ void validate(const TestStruct& ts) {
     REQUIRE(ts.c == "test");
 }
 
-TEST_CASE("Basic reference tests", "[ref]") {
+const TestStruct& getRef(const std::vector<TestStruct>& data, const std::size_t index) {
+    return data.at(index);
+}
+
+TEST_CASE("Basic const reference tests", "[ref]") {
     std::vector<TestStruct> testData = {
         TestStruct {1, 1.0f, "1"},
         TestStruct {2, 2.0f, "2"},
@@ -42,4 +46,22 @@ TEST_CASE("Basic reference tests", "[ref]") {
 
     jvm::ConstRef<TestStruct> other = ref;
     validate(other);
+
+    ref = getRef(testData, 0);
+    REQUIRE(ref->a == 1);
+    REQUIRE(ref->b == 1.0f);
+    REQUIRE(ref->c == "1");
+
+    REQUIRE(sizeof(ref) == 8);
 }
+
+TEST_CASE("Basic non const reference tests", "[ref]") {
+    TestStruct testData{1, 2.0f, "three"};
+    jvm::Ref<TestStruct> ref = testData;
+    ref->a = 42;
+    ref->b = -69.0f;
+    ref->c = "test";
+
+    validate(ref);
+}
+

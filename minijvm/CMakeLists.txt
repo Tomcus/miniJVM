@@ -17,4 +17,4 @@ target_add_unit_tests(TARGET minijvm FILES
     src/types/class/attribute.unit.cpp
 )
 
-target_add_static_analyzers(minijvm)
+# target_add_static_analyzers(minijvm)
