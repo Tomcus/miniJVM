@@ -1,0 +1,68 @@
+Class Factorial extends java/lang/Object
+v.61.0
+======================
+ConstPool[52]:
+	1: MethodRef<classInfo: 2, nameAndType: 3>
+	2: ClassInfo<name: 4>
+	3: NameAndType<name: 5, type: 6>
+	4: String<"java/lang/Object">
+	5: String<"<init>">
+	6: String<"()V">
+	7: StringRef<stringIndex: 8>
+	8: String<"">
+	9: FieldRef<classInfo: 10, nameAndType: 11>
+	10: ClassInfo<name: 12>
+	11: NameAndType<name: 13, type: 14>
+	12: String<"Factorial">
+	13: String<"calculationHistory">
+	14: String<"Ljava/lang/String;">
+	15: FieldRef<classInfo: 10, nameAndType: 16>
+	16: NameAndType<name: 17, type: 18>
+	17: String<"result">
+	18: String<"I">
+	19: MethodRef<classInfo: 20, nameAndType: 21>
+	20: ClassInfo<name: 22>
+	21: NameAndType<name: 23, type: 24>
+	22: String<"java/lang/Integer">
+	23: String<"toString">
+	24: String<"(I)Ljava/lang/String;">
+	25: InvokeDynamic<bootstrapMethod: 0, nameAndType: 26>
+	26: NameAndType<name: 27, type: 28>
+	27: String<"makeConcatWithConstants">
+	28: String<"(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;">
+	29: MethodRef<classInfo: 10, nameAndType: 30>
+	30: NameAndType<name: 31, type: 32>
+	31: String<"calculate">
+	32: String<"(I)V">
+	33: String<"Code">
+	34: String<"LineNumberTable">
+	35: String<"StackMapTable">
+	36: String<"SourceFile">
+	37: String<"Factorial.java">
+	38: String<"BootstrapMethods">
+	39: MethhodHandle<kind: INVOKE_STATIC, referenceIndex: 40>
+	40: MethodRef<classInfo: 41, nameAndType: 42>
+	41: ClassInfo<name: 43>
+	42: NameAndType<name: 27, type: 44>
+	43: String<"java/lang/invoke/StringConcatFactory">
+	44: String<"(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;">
+	45: StringRef<stringIndex: 46>
+	46: String<"*">
+	47: String<"InnerClasses">
+	48: ClassInfo<name: 49>
+	49: String<"java/lang/invoke/MethodHandles$Lookup">
+	50: ClassInfo<name: 51>
+	51: String<"java/lang/invoke/MethodHandles">
+	52: String<"Lookup">
+Fields[2]:
+	Field<flags: 0x01, name: calculationHistory, descriptor: 14>
+	Field<flags: 0x01, name: result, descriptor: 18>
+Methods[2]:
+	Method<flags: 0x01, name: <init>, descriptor: 6>
+		Attribute<name: Code, data: [0, 2, 0, 1, 0, 0, 0, 16, 42, 183, 0, 1, 42, 18, 7, 181, 0, 9, 42, 4, 181, 0, 15, 177, 0, 0, 0, 1, 0, 34, 0, 0, 0, 14, 0, 3, 0, 0, 0, 1, 0, 4, 0, 2, 0, 10, 0, 3]>
+	Method<flags: 0x01, name: calculate, descriptor: 32>
+		Attribute<name: Code, data: [0, 3, 0, 2, 0, 0, 0, 40, 42, 89, 180, 0, 15, 27, 104, 181, 0, 15, 42, 27, 184, 0, 19, 42, 180, 0, 9, 186, 0, 25, 0, 0, 181, 0, 9, 27, 4, 164, 0, 10, 42, 27, 4, 100, 182, 0, 29, 177, 0, 0, 0, 2, 0, 34, 0, 0, 0, 22, 0, 5, 0, 0, 0, 5, 0, 10, 0, 6, 0, 27, 0, 7, 0, 32, 0, 8, 0, 39, 0, 10, 0, 35, 0, 0, 0, 3, 0, 1, 39]>
+Attributes[3]:
+	Attribute<name: SourceFile, data: [0, 37]>
+	Attribute<name: BootstrapMethods, data: [0, 1, 0, 39, 0, 1, 0, 45]>
+	Attribute<name: InnerClasses, data: [0, 1, 0, 48, 0, 50, 0, 52, 0, 25]>
