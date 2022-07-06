@@ -1,11 +1,11 @@
-#ifndef MINI_JVM_TYPES_CLASS_HPP
-#define MINI_JVM_TYPES_CLASS_HPP
+#pragma once
 
-#include "jvm/types/basic.hpp"
 #include "jvm/types/const_pool.hpp"
 #include "jvm/types/class/attribute.hpp"
 #include "jvm/types/class/field.hpp"
 #include "jvm/types/class/method.hpp"
+#include "jvm/types/basic.hpp"
+#include "jvm/types/frame.hpp"
 #include "jvm/utils/ref.hpp"
 
 #include <cstdint>
@@ -13,6 +13,7 @@
 #include <string_view>
 #include <vector>
 #include <filesystem>
+#include <optional>
 
 namespace jvm {
 
@@ -23,7 +24,14 @@ struct ver16 {
 
 using Interfaces = std::vector<ConstRef<ConstPool::ClassInfo>>;
 
-class Class {
+class ClassBase {
+public:
+    virtual ~ClassBase() { }
+    virtual std::optional<Frame> resolveMethod(const std::string_view) const = 0;
+    virtual std::optional<VariableType> resolveField(const std::string_view) const = 0;
+};
+
+class Class: public ClassBase {
 public:
     constexpr static std::uint16_t MIN_CLASS_FILE_FORMAT_MAJOR_VERSION = 55;
 
@@ -31,6 +39,9 @@ public:
 
     std::string_view getClassName() const;
     std::string_view getParentClassName() const;
+
+    std::optional<Frame> resolveMethod(const std::string_view) const final;
+    std::optional<VariableType> resolveField(const std::string_view) const final;
 
     ver16 version;
     ConstPool constPool;
@@ -62,5 +73,3 @@ public:
 };
 
 }
-
-#endif//MINI_JVM_TYPES_CLASS_HPP
