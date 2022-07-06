@@ -63,5 +63,32 @@ TEST_CASE("Basic non const reference tests", "[ref]") {
     ref->c = "test";
 
     validate(ref);
+    validate(testData);
+
+    TestStruct other{666, 420.0f, "dude"};
+    ref = other;
+
+    REQUIRE(ref->a == 666);
+    REQUIRE(ref->b == 420.0f);
+    REQUIRE(ref->c == "dude");
+
+    jvm::Ref<TestStruct> otherRef = ref;
+    ref = testData;
+    REQUIRE(otherRef->a == 666);
+    REQUIRE(otherRef->b == 420.0f);
+    REQUIRE(otherRef->c == "dude");
+
+    validate(ref);
+}
+
+TEST_CASE("Test ref to const ref support", "[ref]") {
+    TestStruct testData{0, 0.0f, ""};
+    jvm::Ref<TestStruct> ref = testData;
+    jvm::ConstRef<TestStruct> cref = ref;
+    testData.a = 42;
+    testData.b = -69.0f;
+    testData.c = "test";
+    validate(ref);
+    validate(cref);
 }
 
