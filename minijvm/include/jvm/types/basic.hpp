@@ -7,15 +7,19 @@
 #include <string>
 
 #include "jvm/types/class/base.hpp"
+#include "jvm/utils/ref.hpp"
 
 namespace jvm {
 
-using PrimitiveInteger = std::variant<std::int32_t, std::int64_t>;
-using PrimitiveFloat = std::variant<float, double>;
-using PrimitiveType = std::variant<PrimitiveFloat, PrimitiveInteger>;
-using PrimitiveArray = std::variant<std::vector<std::int32_t>, std::vector<float>, std::vector<std::int64_t>, std::vector<double>>;
-using BasicType = std::variant<PrimitiveType, std::string>;
-using BasicArray = std::variant<PrimitiveArray, std::vector<std::string>>;
+class ClassInstanceBase;
+
+#define PRIMITE_INTEGERS std::int32_t, std::int64_t
+using PrimitiveInteger = std::variant<PRIMITE_INTEGERS>;
+#define PRIMITE_FLOATS float, double
+using PrimitiveFloat = std::variant<PRIMITE_FLOATS>;
+using PrimitiveType = std::variant<PRIMITE_INTEGERS, PRIMITE_FLOATS, bool>;
+using ComplexType = std::variant<std::monostate, Ref<ClassInstanceBase>>;
+using VariableType = std::variant<PrimitiveType, ComplexType>;
 
 }
 
