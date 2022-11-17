@@ -1,5 +1,4 @@
-#ifndef MINI_JVM_TYPES_CLASS_ATTRIBUTE_HPP
-#define MINI_JVM_TYPES_CLASS_ATTRIBUTE_HPP
+#pragma once
 
 #include <vector>
 
@@ -30,5 +29,3 @@ namespace jvm {
 
     using Attributes = std::vector<Attribute>;
 }
-
-#endif//MINI_JVM_TYPES_CLASS_ATTRIBUTE_HPP

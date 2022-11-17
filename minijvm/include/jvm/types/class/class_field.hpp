@@ -1,5 +1,4 @@
-#ifndef MINI_JVM_TYPES_CLASS_CLASS_FIELD_HPP
-#define MINI_JVM_TYPES_CLASS_CLASS_FIELD_HPP
+#pragma once
 
 #include "jvm/types/class/attribute.hpp"
 #include "jvm/types/class/base.hpp"
@@ -14,4 +13,3 @@ namespace jvm {
     };
 }
 
-#endif//MINI_JVM_TYPES_CLASS_CLASS_FIELD_HPP

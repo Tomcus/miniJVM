@@ -1,18 +1,19 @@
-#ifndef MINI_JVM_TYPES_CLASS_METHOD_HPP
-#define MINI_JVM_TYPES_CLASS_METHOD_HPP
+#pragma once
 
 #include "attribute.hpp"
+#include "jvm/bytecode/simple/forward.hpp"
+#include "jvm/types/class/class_field.hpp"
 #include "jvm/types/const_pool.hpp"
 
 namespace jvm {
-    struct Method {
-        std::uint16_t flags;
-        jvm::ConstRef<std::string> name;
-        Index descriptorIndex;
-        Attributes attributes;
+    struct Method: public jvm::ClassField {
+        bytecode::Instructions code{};
+        Method(jvm::AccessFlags acFlags, jvm::ConstRef<std::string> fieldName, Index typeDescriptorIndex, Attributes fieldAttributes, bytecode::Instructions code):
+              jvm::ClassField{.flags = acFlags, .name = fieldName, .descriptorIndex = typeDescriptorIndex, .attributes = std::move(fieldAttributes)}, code(std::move(code)) {
+            // TODO: assign mandatory attributes
+        }
     };
 
     using Methods = std::vector<jvm::Method>;
 }
 
-#endif//MINI_JVM_TYPES_CLASS_METHOD_HPP

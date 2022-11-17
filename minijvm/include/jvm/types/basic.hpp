@@ -1,5 +1,4 @@
-#ifndef MINI_JVM_TYPES_BASIC_HPP
-#define MINI_JVM_TYPES_BASIC_HPP
+#pragma once
 
 #include <cstdint>
 #include <variant>
@@ -19,4 +18,3 @@ using BasicArray = std::variant<PrimitiveArray, std::vector<std::string>>;
 
 }
 
-#endif//MINI_JVM_TYPES_BASIC_HPP

@@ -1,5 +1,4 @@
-#ifndef MINI_JVM_TYPES_CLASS_BASE_HPP
-#define MINI_JVM_TYPES_CLASS_BASE_HPP
+#pragma once
 
 #include <cstdint>
 
@@ -15,5 +14,3 @@ namespace jvm {
         ACC_ABSTRACT = 0x400
     };
 }
-
-#endif//MINI_JVM_TYPES_CLASS_BASE_HPP
