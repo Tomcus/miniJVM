@@ -12,6 +12,8 @@ jobs:
           version: 11
       - name: Get conan
         uses: turtlebrowser/get-conan@main
+        with:
+          version: 1.59.0
       - name: Checkout branch
         uses: actions/checkout@v3
       - name: Make build directory
