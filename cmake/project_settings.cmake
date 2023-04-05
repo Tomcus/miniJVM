@@ -43,22 +43,3 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinS
         -Werror
     )
 endif()
-
-find_program(CLANG_TIDY NAMES clang-tidy)
-find_program(CPP_CHECK NAMES cppcheck)
-find_program(IWYU NAMES include-what-you-use)
-
-function(target_add_static_analyzers)
-    if (DEFINED CLANG_TIDY)
-        set_property(TARGET ${ARGV0} PROPERTY CXX_CLANG_TIDY "clang-tidy;-checks=-*,performance-*,modernize-*,clang-analyzer-*,concurrency-*,readability-*,-modernize-use-trailing-return-type")
-    endif()
-
-    # if (DEFINED CPP_CHECK)
-    #     set_property(TARGET ${ARGV0} PROPERTY CXX_CPPCHECK "cppcheck")
-    # endif() 
-
-    # IWYU is broken -- needs to be fixed
-    # if (DEFINED IWYU)
-    #     set_property(TARGET ${ARGV0} PROPERTY CXX_INCLUDE_WHAT_YOU_USE "include-what-you-use")
-    # endif()
-endfunction(target_add_static_analyzers)

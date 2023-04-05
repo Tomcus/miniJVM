@@ -7,5 +7,3 @@ target_link_libraries(class_dump
     CONAN_PKG::lyra
     minijvm
 )
-
-target_add_static_analyzers(class_dump)

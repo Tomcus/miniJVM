@@ -10,6 +10,7 @@ target_include_directories(minijvm PUBLIC
 target_link_libraries(minijvm PUBLIC
     project_settings
     CONAN_PKG::fmt
+    CONAN_PKG::fmtlog
 )
 
 target_add_unit_tests(TARGET minijvm FILES
@@ -17,4 +18,3 @@ target_add_unit_tests(TARGET minijvm FILES
     src/types/class/attribute.unit.cpp
 )
 
-# target_add_static_analyzers(minijvm)

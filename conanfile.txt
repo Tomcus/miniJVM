@@ -1,4 +1,5 @@
 [requires]
 fmt/8.1.1
+fmtlog/2.2.1
 lyra/1.6.0
 catch2/3.0.1
