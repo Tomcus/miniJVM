@@ -114,10 +114,10 @@ void Class::readMethods(std::istream& in) {
     methods.reserve(methodsCount);
     for (std::size_t i = 0; i < methodsCount; ++i) {
         methods.emplace_back(Method{
-            .flags = read<std::uint16_t>(in),
-            .name = constPool.getRef<std::string>(read<Index>(in)),
-            .descriptorIndex = read<Index>(in),
-            .attributes = readAttributes(in)
+            read<AccessFlags>(in),
+            constPool.getRef<std::string>(read<Index>(in)),
+            read<Index>(in),
+            readAttributes(in)
         });
     }
 }

@@ -123,7 +123,7 @@ void dumpFields(const jvm::Fields& fields, std::ostream& output) {
 
 void dumpMethods(const jvm::Methods& methods, std::ostream& output) {
     for (const auto& method: methods) {
-        output << fmt::format("\tMethod<flags: {:#04x}, name: {}, descriptor: {}>\n", method.flags, std::string(method.name), method.descriptorIndex);
+        output << fmt::format("\tMethod<flags: {:#04x}, name: {}, descriptor: {}>\n", static_cast<std::uint16_t>(method.flags), std::string(method.name), method.descriptorIndex);
         for (const auto& attribute: method.attributes) {
             output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", std::string(attribute.name), fmt::join(attribute.data, ", "));
         }
@@ -172,7 +172,7 @@ int main(int argc, const char* argv[]) {
             dumpClassFile(classFile, std::cout);
         }
     } catch (std::exception& exc) {
-        fmt::print("Exception occurred: {}", exc.what());
+        fmt::print("Exception occurred: {}\n", exc.what());
         return -2;
     }
 

@@ -1,6 +1,7 @@
 add_library(minijvm
     src/types/const_pool.cpp
     src/types/class.cpp
+    src/types/class/method.cpp
 )
 
 target_include_directories(minijvm PUBLIC
