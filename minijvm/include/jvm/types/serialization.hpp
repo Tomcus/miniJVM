@@ -59,7 +59,7 @@ ReturnType read(std::istream& in) {
         res = res << 8;
         res += static_cast<std::uint8_t>(readBuffer[i]);
     }
-    logi("Read {}-bytes unsigned integer with value: {:#04x}", sizeof(ReturnType), res);
+    logd("Read {}-bytes unsigned integer with value: {:#04x}", sizeof(ReturnType), res);
     return res;
 }
 

@@ -49,7 +49,7 @@ Class Class::load(const std::filesystem::path& path) {
 }
 
 void Class::readVersion(std::istream& in) {
-    logi("Reading version");
+    logd("Reading version");
     version.minor = read<std::uint16_t>(in);
     version.major = read<std::uint16_t>(in);
 
@@ -58,7 +58,7 @@ void Class::readVersion(std::istream& in) {
 }
 
 void Class::readInterfaces(std::istream& in) {
-    logi("Reading Interfaces");
+    logd("Reading Interfaces");
     const auto interfaceCount = read<std::uint16_t>(in);
     interfaces.reserve(interfaceCount);
     for (std::size_t i = 0; i < interfaceCount; ++i) {
@@ -77,7 +77,7 @@ std::string_view Class::getParentClassName() const {
 }
 
 Attributes Class::readAttributes(std::istream& in) const {
-    logi("Reading attributes");
+    logd("Reading attributes");
     Attributes attrs;
     const auto attrsCount = read<std::uint16_t>(in);
     attrs.reserve(attrsCount);
@@ -95,7 +95,7 @@ Attributes Class::readAttributes(std::istream& in) const {
 }
 
 void Class::readFields(std::istream& in) {
-    logi("Reading Fields");
+    logd("Reading Fields");
     const auto fieldsCount = read<std::uint16_t>(in);
     fields.reserve(fieldsCount);
     for (std::size_t i = 0; i < fieldsCount; ++i) {
@@ -109,7 +109,7 @@ void Class::readFields(std::istream& in) {
 }
 
 void Class::readMethods(std::istream& in) {
-    logi("Reading Methods");
+    logd("Reading Methods");
     const auto methodsCount = read<std::uint16_t>(in);
     methods.reserve(methodsCount);
     for (std::size_t i = 0; i < methodsCount; ++i) {
