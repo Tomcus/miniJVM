@@ -9,6 +9,8 @@
 #include <variant>
 #include <typeinfo>
 
+#include <fmtlog/fmtlog.h>
+
 namespace jvm {
 
 ConstPool ConstPool::load(std::istream& in) {
@@ -19,6 +21,7 @@ ConstPool ConstPool::load(std::istream& in) {
 
 template<>
 std::string read(std::istream & in) {
+    logd("Reading string");
     const auto stringSize = read<std::uint16_t>(in);
     std::string res{};
     res.resize(stringSize);
@@ -30,11 +33,13 @@ std::string read(std::istream & in) {
 
 template<>
 ConstPool::Tag read(std::istream & in) {
+    logd("Reading ConstPool::Tag");
     return static_cast<ConstPool::Tag>(read<std::uint8_t>(in));
 }
 
 template<>
 ConstPool::MethodRef read(std::istream & in) {
+    logd("Reading ConstPool::MethodRef");
     return ConstPool::MethodRef{
         .classInfo = read<Index>(in),
         .nameAndType = read<Index>(in)
@@ -43,6 +48,7 @@ ConstPool::MethodRef read(std::istream & in) {
 
 template<>
 ConstPool::FieldRef read(std::istream& in) {
+    logd("Reading ConstPool::FieldRef");
     return ConstPool::FieldRef {
         .classInfo = read<Index>(in),
         .nameAndType = read<Index>(in)
@@ -51,6 +57,7 @@ ConstPool::FieldRef read(std::istream& in) {
 
 template<>
 ConstPool::NameAndType read(std::istream & in) {
+    logd("Reading ConstPool::NameAndType");
     return ConstPool::NameAndType {
         .name = read<Index>(in),
         .type = read<Index>(in)
@@ -59,6 +66,7 @@ ConstPool::NameAndType read(std::istream & in) {
 
 template<>
 ConstPool::ClassInfo read(std::istream & in) {
+    logd("Reading ConstPool::ClassInfo");
     return ConstPool::ClassInfo {
         .name = read<Index>(in)
     };
@@ -66,6 +74,7 @@ ConstPool::ClassInfo read(std::istream & in) {
 
 template<>
 ConstPool::StringRef read(std::istream & in) {
+    logd("Reading ConstPool::StringRef");
     return ConstPool::StringRef {
         .string = read<Index>(in)
     };
@@ -73,6 +82,7 @@ ConstPool::StringRef read(std::istream & in) {
 
 template<>
 ConstPool::InvokeDynamic read(std::istream & in) {
+    logd("Reading ConstPool::InvokeDynamic");
     return ConstPool::InvokeDynamic {
         .boostrapMethod = read<Index>(in),
         .nameAndType = read<Index>(in)
@@ -81,6 +91,7 @@ ConstPool::InvokeDynamic read(std::istream & in) {
 
 template<>
 ConstPool::MethodHandle::Type read(std::istream& in) {
+    logd("Reading ConstPool::MethodHandle::Type");
     constexpr static std::uint8_t minValue = 1;
     constexpr static std::uint8_t maxValue = 9;
     const auto val = read<std::uint8_t>(in);
@@ -90,6 +101,7 @@ ConstPool::MethodHandle::Type read(std::istream& in) {
 
 template<>
 ConstPool::MethodHandle read(std::istream & in) {
+    logd("Reading ConstPool::MethodHandle");
     return ConstPool::MethodHandle {
         .kind = read<ConstPool::MethodHandle::Type>(in),
         .referenceIndex = read<Index>(in)

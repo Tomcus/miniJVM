@@ -99,12 +99,12 @@ void Class::readFields(std::istream& in) {
     const auto fieldsCount = read<std::uint16_t>(in);
     fields.reserve(fieldsCount);
     for (std::size_t i = 0; i < fieldsCount; ++i) {
-        fields.emplace_back(Field(
+        fields.emplace_back(Field{
             read<jvm::AccessFlags>(in),
             constPool.getRef<std::string>(read<Index>(in)),
             read<Index>(in),
             readAttributes(in)
-        ));
+        });
     }
 }
 
