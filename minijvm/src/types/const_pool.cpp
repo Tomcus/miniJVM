@@ -1,4 +1,5 @@
 #include "jvm/types/const_pool.hpp"
+#include "jvm/types/basic.hpp"
 #include "jvm/utils.hpp"
 #include "jvm/types/serialization.hpp"
 
@@ -10,101 +11,132 @@
 #include <typeinfo>
 
 #include <fmtlog/fmtlog.h>
+#include <nonstd/expected.hpp>
 
 namespace jvm {
 
-ConstPool ConstPool::load(std::istream& in) {
+nonstd::expected<ConstPool, ParsingError> ConstPool::load(std::istream& in) {
     ConstPool cp;
-    cp.loadInstance(in);
+    auto res = cp.loadInstance(in);
+    PROPAGATE_ERROR(res);
     return cp;
 }
 
 template<>
-std::string read(std::istream & in) {
+nonstd::expected<std::string, ParsingError> read(std::istream & in) {
     logd("Reading string");
     const auto stringSize = read<std::uint16_t>(in);
+    PROPAGATE_ERROR(stringSize);
     std::string res{};
-    res.resize(stringSize);
-    if (!in.read(res.data(), stringSize).good()) {
-        throw ConstPool::Error{fmt::format("Can't read string of length: {}. {}", stringSize, getIStreamErrorString(in))};
+    res.resize(*stringSize);
+    if (!in.read(res.data(), *stringSize).good()) {
+        return nonstd::make_unexpected(ParsingError::cant_read_from_istream(in, "string"));
     }
     return res;
 }
 
 template<>
-ConstPool::Tag read(std::istream & in) {
+nonstd::expected<ConstPool::Tag, ParsingError> read(std::istream & in) {
     logd("Reading ConstPool::Tag");
-    return static_cast<ConstPool::Tag>(read<std::uint8_t>(in));
+    auto res = read<std::uint8_t>(in);
+    PROPAGATE_ERROR(res);
+    return static_cast<ConstPool::Tag>(*res);
 }
 
 template<>
-ConstPool::MethodRef read(std::istream & in) {
+nonstd::expected<ConstPool::MethodRef, ParsingError> read(std::istream & in) {
     logd("Reading ConstPool::MethodRef");
+    auto classInfoIndex = read<Index>(in);
+    PROPAGATE_ERROR(classInfoIndex);
+    auto nameAndTypeIndex = read<Index>(in);
+    PROPAGATE_ERROR(nameAndTypeIndex);
     return ConstPool::MethodRef{
-        .classInfo = read<Index>(in),
-        .nameAndType = read<Index>(in)
+        .classInfo = *classInfoIndex,
+        .nameAndType = *nameAndTypeIndex
     };
 }
 
 template<>
-ConstPool::FieldRef read(std::istream& in) {
+nonstd::expected<ConstPool::FieldRef, ParsingError> read(std::istream& in) {
     logd("Reading ConstPool::FieldRef");
+    auto classInfoIndex = read<Index>(in);
+    PROPAGATE_ERROR(classInfoIndex);
+    auto nameAndTypeIndex = read<Index>(in);
+    PROPAGATE_ERROR(nameAndTypeIndex);
     return ConstPool::FieldRef {
-        .classInfo = read<Index>(in),
-        .nameAndType = read<Index>(in)
+        .classInfo = *classInfoIndex,
+        .nameAndType = *nameAndTypeIndex
     };
 }
 
 template<>
-ConstPool::NameAndType read(std::istream & in) {
+nonstd::expected<ConstPool::NameAndType, ParsingError> read(std::istream & in) {
     logd("Reading ConstPool::NameAndType");
+    auto nameIndex = read<Index>(in);
+    PROPAGATE_ERROR(nameIndex);
+    auto typeIndex = read<Index>(in);
+    PROPAGATE_ERROR(typeIndex);
     return ConstPool::NameAndType {
-        .name = read<Index>(in),
-        .type = read<Index>(in)
+        .name = *nameIndex,
+        .type = *typeIndex
     };
 }
 
 template<>
-ConstPool::ClassInfo read(std::istream & in) {
+nonstd::expected<ConstPool::ClassInfo, ParsingError> read(std::istream & in) {
     logd("Reading ConstPool::ClassInfo");
+    auto classInfoIndex = read<Index>(in);
+    PROPAGATE_ERROR(classInfoIndex);
     return ConstPool::ClassInfo {
-        .name = read<Index>(in)
+        .name = *classInfoIndex
     };
 }
 
 template<>
-ConstPool::StringRef read(std::istream & in) {
+nonstd::expected<ConstPool::StringRef, ParsingError> read(std::istream & in) {
     logd("Reading ConstPool::StringRef");
+    auto stringIndex = read<Index>(in);
+    PROPAGATE_ERROR(stringIndex);
     return ConstPool::StringRef {
-        .string = read<Index>(in)
+        .string = *stringIndex
     };
 }
 
 template<>
-ConstPool::InvokeDynamic read(std::istream & in) {
+nonstd::expected<ConstPool::InvokeDynamic, ParsingError> read(std::istream & in) {
     logd("Reading ConstPool::InvokeDynamic");
+    auto methodIndex = read<Index>(in);
+    PROPAGATE_ERROR(methodIndex);
+    auto nameAndTypeIndex = read<Index>(in);
+    PROPAGATE_ERROR(nameAndTypeIndex);
     return ConstPool::InvokeDynamic {
-        .boostrapMethod = read<Index>(in),
-        .nameAndType = read<Index>(in)
+        .boostrapMethod = *methodIndex,
+        .nameAndType = *nameAndTypeIndex
     };
 }
 
 template<>
-ConstPool::MethodHandle::Type read(std::istream& in) {
+nonstd::expected<ConstPool::MethodHandle::Type, ParsingError> read(std::istream& in) {
     logd("Reading ConstPool::MethodHandle::Type");
     constexpr static std::uint8_t minValue = 1;
     constexpr static std::uint8_t maxValue = 9;
     const auto val = read<std::uint8_t>(in);
-    check<ConstPool::Error>(val >= minValue && val <= maxValue, "MethodHandle kind should be value between 1 and 9");
-    return static_cast<ConstPool::MethodHandle::Type>(val);
+    PROPAGATE_ERROR(val);
+    auto checkRes = check<ParsingError>(*val >= minValue && *val <= maxValue, "MethodHandle kind should be value between 1 and 9");
+    PROPAGATE_ERROR(checkRes);
+    return static_cast<ConstPool::MethodHandle::Type>(*val);
 }
 
 template<>
-ConstPool::MethodHandle read(std::istream & in) {
+nonstd::expected<ConstPool::MethodHandle, ParsingError> read(std::istream & in) {
     logd("Reading ConstPool::MethodHandle");
+    auto kind = read<ConstPool::MethodHandle::Type>(in);
+    PROPAGATE_ERROR(kind);
+    auto referenceIndex = read<Index>(in);
+    PROPAGATE_ERROR(referenceIndex);
     return ConstPool::MethodHandle {
-        .kind = read<ConstPool::MethodHandle::Type>(in),
-        .referenceIndex = read<Index>(in)
+        .kind = *kind,
+        .referenceIndex = *referenceIndex
     };
 }
 
@@ -112,61 +144,96 @@ size_t ConstPool::size() const {
     return dataSize;
 }
 
-const ConstPool::Value& ConstPool::operator[](const std::size_t index) const {
-    validateIndex(index);
+nonstd::expected<jvm::ConstRef<ConstPool::Value>, ConstPool::Error> ConstPool::operator[](const std::size_t index) const {
+    auto res = validateIndex(index);
+    PROPAGATE_ERROR(res);
     return data[index - 1];
 }
 
-void ConstPool::validateIndex(const std::size_t index) const {
+nonstd::expected<void, ConstPool::Error> ConstPool::validateIndex(const std::size_t index) const {
     if (index == 0) {
-        throw std::out_of_range("Const pool is indexed from 1. 0 shouldn't be accessed.");
+        return nonstd::make_unexpected(
+            Error{.message = "Const pool is indexed from 1. 0 shouldn't be accessed."}
+        );
     }
     if (index > data.size()) {
-        throw std::out_of_range(fmt::format("Const pool index [{}] out of range (max is {})", index, data.size()));
+        return nonstd::make_unexpected(
+            Error{.message = fmt::format("Const pool index [{}] out of range (max is {})", index, data.size())}
+        );
     }
+    return {};
 }
 
-void ConstPool::loadInstance(std::istream& in) {
-    const std::size_t constPoolMaxIndex = read<std::uint16_t>(in);
-    check<Error>(constPoolMaxIndex != 0, "Const poll max index should be bigger then 0");
-    dataSize = constPoolMaxIndex - 1;
+nonstd::expected<void, ParsingError> ConstPool::loadInstance(std::istream& in) {
+    const auto constPoolMaxIndex = read<std::uint16_t>(in);
+    PROPAGATE_ERROR(constPoolMaxIndex);
+    check<Error>(*constPoolMaxIndex != 0, "Const poll max index should be bigger then 0");
+    dataSize = *constPoolMaxIndex - 1;
     if (dataSize == 0) {
         fmt::print("Empty constpool");
-        return;
+        return {};
     }
 
     data.reserve(dataSize);
     for (std::size_t i = 0; i < dataSize; ++i) {
         auto typeTag = read<ConstPool::Tag>(in);
-        switch(typeTag) {
-            case ConstPool::Tag::MethodRef:
-                data.emplace_back(read<ConstPool::MethodRef>(in));
-            break;
-            case ConstPool::Tag::FieldRef:
-                data.emplace_back(read<ConstPool::FieldRef>(in));
-            break;
-            case ConstPool::Tag::StringRef:
-                data.emplace_back(read<ConstPool::StringRef>(in));
-            break;
-            case ConstPool::Tag::Class:
-                data.emplace_back(read<ConstPool::ClassInfo>(in));
-            break;
-            case ConstPool::Tag::NameAndType:
-                data.emplace_back(read<ConstPool::NameAndType>(in));
-            break;
-            case ConstPool::Tag::String:
-                data.emplace_back(read<std::string>(in));
-            break;
-            case ConstPool::Tag::InvokeDynamic:
-                data.emplace_back(read<ConstPool::InvokeDynamic>(in));
-            break;
-            case ConstPool::Tag::MethodHandle:
-                data.emplace_back(read<ConstPool::MethodHandle>(in));
-            break;
+        PROPAGATE_ERROR(typeTag);
+        switch(*typeTag) {
+            case ConstPool::Tag::MethodRef: {
+                auto methodRef = read<ConstPool::MethodRef>(in);
+                PROPAGATE_ERROR(methodRef);
+                data.emplace_back(*methodRef);
+                break;
+            }
+            case ConstPool::Tag::FieldRef: {
+                auto fieldRef = read<ConstPool::FieldRef>(in);
+                PROPAGATE_ERROR(fieldRef);
+                data.emplace_back(*fieldRef);
+                break;
+            }
+            case ConstPool::Tag::StringRef: {
+                auto stringRef = read<ConstPool::StringRef>(in);
+                PROPAGATE_ERROR(stringRef);
+                data.emplace_back(*stringRef);
+                break;
+            }
+            case ConstPool::Tag::Class: {
+                auto classInfo = read<ConstPool::ClassInfo>(in);
+                PROPAGATE_ERROR(classInfo);
+                data.emplace_back(*classInfo);
+                break;
+            }
+            case ConstPool::Tag::NameAndType: {
+                auto nameAndType = read<ConstPool::NameAndType>(in);
+                PROPAGATE_ERROR(nameAndType);
+                data.emplace_back(*nameAndType);
+                break;
+            }
+            case ConstPool::Tag::String: {
+                auto cpString = read<std::string>(in);
+                PROPAGATE_ERROR(cpString);
+                data.emplace_back(*cpString);
+                break;
+            }
+            case ConstPool::Tag::InvokeDynamic: {
+                auto invokeDynamic = read<ConstPool::InvokeDynamic>(in);
+                PROPAGATE_ERROR(invokeDynamic);
+                data.emplace_back(*invokeDynamic);
+                break;
+            }
+            case ConstPool::Tag::MethodHandle: {
+                auto methodHandle = read<ConstPool::MethodHandle>(in);
+                PROPAGATE_ERROR(methodHandle);
+                data.emplace_back(*methodHandle);
+                break;
+            }
             default:
-                throw Error{fmt::format("Unhandled tag: {:#02x}", static_cast<std::uint8_t>(typeTag))};
+                return nonstd::make_unexpected(ParsingError {
+                    .message = fmt::format("Unhandled tag: {:#02x}", static_cast<std::uint8_t>(*typeTag))
+                });
         }
     }
+    return {};
 }
 
 }

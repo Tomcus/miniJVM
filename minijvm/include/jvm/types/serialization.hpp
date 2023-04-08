@@ -9,50 +9,22 @@
 
 #include <fmt/format.h>
 #include <fmtlog/fmtlog.h>
+#include <nonstd/expected.hpp>
+
+#include "jvm/types/basic.hpp"
 
 namespace jvm {
 
-constexpr static int ISTREAM_EOF_ERROR = 100;
-constexpr static int ISTREAM_FAIL_ERROR = 101;
-constexpr static int ISTREAM_BAD_ERROR = 102;
-
-
-inline int getIStreamErrorNumber(const std::istream& in) {
-    if (in.eof()) {
-        return ISTREAM_EOF_ERROR;
-    }
-    if (in.fail()) {
-        return ISTREAM_FAIL_ERROR;
-    }
-    if (in.bad()) {
-        return ISTREAM_BAD_ERROR;
-    }
-    return -1;
-}
-
-inline const std::string_view getIStreamErrorString(const std::istream& in) {
-    if (in.eof()) {
-        return "End of file reached.";
-    }
-    if (in.fail()) {
-        return "Recoverable error reached. Wrong data format read.";
-    }
-    if (in.bad()) {
-        return "Unrecoverable error reached.";
-    }
-    return "No error";
-}
-
 template<typename ReturnType>
-ReturnType read(std::istream&) {
-    throw std::runtime_error{"Unsupported type to read."};
+nonstd::expected<ReturnType, ParsingError> read(std::istream&) {
+    return nonstd::make_unexpected(ParsingError::unsuported_type());
 }
 
 template<std::unsigned_integral ReturnType> 
-ReturnType read(std::istream& in) {
+nonstd::expected<ReturnType, ParsingError> read(std::istream& in) {
     static std::array<char, 64> readBuffer{};
     if (!in.read(readBuffer.data(), sizeof(ReturnType))) {
-        throw std::runtime_error{fmt::format("Can't read the unsigned integer of size {} bytes. {}", sizeof(ReturnType), getIStreamErrorString(in))};
+        return nonstd::make_unexpected(ParsingError::cant_read_from_istream(in, fmt::format("unsigned integer of size {}", sizeof(ReturnType))));
     }
     ReturnType res = 0;
     for (std::size_t i = 0; i < sizeof(ReturnType); ++i) {

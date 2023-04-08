@@ -5,18 +5,16 @@
 #include <typeinfo>
 
 #include <fmt/format.h>
+#include <nonstd/expected.hpp>
 
 namespace jvm {
 
 template<typename Error>
-inline void check(bool condition, const std::string_view message = "") {
+inline nonstd::expected<void, Error> check(bool condition, std::string_view message = "NO MESSAGE PROVIDED") {
     if (!condition) {
-        if (message.empty()) {
-            throw Error{fmt::format("Check failed with message: NO MESSAGE PROVIDED (err_type: {})", typeid(Error).name())};
-        } else {
-            throw Error{fmt::format("Check failed with message: {}", message)};
-        }
+        return nonstd::make_unexpected(Error{fmt::format("Check failed with message: {}", message)});
     }
+    return {};
 }
 
 }

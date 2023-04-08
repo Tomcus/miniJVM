@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include <nonstd/expected.hpp>
+
 #include "jvm/types/class/base.hpp"
 
 namespace jvm {
@@ -17,6 +19,14 @@ using PrimitiveArray = std::variant<std::vector<std::int32_t>, std::vector<float
 using BasicType = std::variant<PrimitiveType, std::string>;
 using BasicArray = std::variant<PrimitiveArray, std::vector<std::string>>;
 
+struct ParsingError {
+    std::string message;
+    static ParsingError cant_read_from_istream(std::istream&, std::string_view);
+    static ParsingError unsuported_type();
+};
+
 }
+
+#define PROPAGATE_ERROR(exptected) if (!exptected) return nonstd::make_unexpected(exptected.error())
 
 #endif//MINI_JVM_TYPES_BASIC_HPP

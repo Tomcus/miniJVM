@@ -27,10 +27,10 @@ class Class {
 public:
     constexpr static std::uint16_t MIN_CLASS_FILE_FORMAT_MAJOR_VERSION = 55;
 
-    static Class load(const std::filesystem::path& path);
+    [[nodiscard]] static nonstd::expected<Class, std::variant<ParsingError, ConstPool::Error>> load(const std::filesystem::path& path);
 
-    std::string_view getClassName() const;
-    std::string_view getParentClassName() const;
+    [[nodiscard]] nonstd::expected<std::string_view, ConstPool::Error> getClassName() const;
+    [[nodiscard]] nonstd::expected<std::string_view, ConstPool::Error> getParentClassName() const;
 
     ver16 version;
     ConstPool constPool;
@@ -44,21 +44,11 @@ public:
 
 protected:
 
-    void readVersion(std::istream& in);
-    void readInterfaces(std::istream& in);
-    void readFields(std::istream& in);
-    void readMethods(std::istream& in);
-    Attributes readAttributes(std::istream& in) const;
-};
-
-class ReadingError: public std::runtime_error {
-public:
-    ReadingError(const std::string& message): runtime_error(message) { }
-};
-
-class ClassError: public std::runtime_error {
-public:
-    ClassError(const std::string& message): runtime_error(message) { }
+    [[nodiscard]] nonstd::expected<void, ParsingError> readVersion(std::istream& in);
+    [[nodiscard]] nonstd::expected<void, std::variant<ParsingError, ConstPool::Error>> readInterfaces(std::istream& in);
+    [[nodiscard]] nonstd::expected<void, std::variant<ParsingError, ConstPool::Error>> readFields(std::istream& in);
+    [[nodiscard]] nonstd::expected<void, std::variant<ParsingError, ConstPool::Error>> readMethods(std::istream& in);
+    [[nodiscard]] nonstd::expected<Attributes, std::variant<ParsingError, ConstPool::Error>> readAttributes(std::istream& in) const;
 };
 
 }

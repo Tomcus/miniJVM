@@ -1,4 +1,6 @@
 #include "jvm/types.hpp"
+#include "jvm/types/basic.hpp"
+#include "jvm/types/const_pool.hpp"
 
 #include <algorithm>
 #include <exception>
@@ -13,6 +15,8 @@
 #include <variant>
 #include <vector>
 
+#include <nonstd/expected.hpp>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
@@ -20,6 +24,29 @@
 #include <fmt/format.h>
 #include <fmt/core.h>
 #pragma GCC diagnostic pop
+
+struct Error {
+    std::string message;
+    static Error from(jvm::ConstPool::Error e) {
+        return Error {
+            .message = std::move(e.message)
+        };
+    }
+
+    static Error from(jvm::ParsingError e) {
+        return Error {
+            .message = std::move(e.message)
+        };
+    }
+
+    static Error from(std::variant<jvm::ParsingError, jvm::ConstPool::Error> e) {
+        return std::visit([](auto inner) {
+            return Error::from(inner);
+        }, e);
+    }
+};
+
+#define CONVERT_ERROR(expected) if (!expected) nonstd::make_unexpected(Error::from(expected.error()))
 
 template <typename Type>
 std::string dumpConstPoolValue(const Type& /*value*/) {
@@ -61,7 +88,7 @@ std::string dumpConstPoolValue(const jvm::ConstPool::NameAndType& value) {
     return fmt::format("NameAndType<name: {}, type: {}>", value.name, value.type);
 }
 
-std::string to_string(jvm::ConstPool::MethodHandle::Type value) {
+[[nodiscard]] std::string to_string(jvm::ConstPool::MethodHandle::Type value) {
     switch (value) {
         case jvm::ConstPool::MethodHandle::Type::GET_FIELD:
             return "GET_FIELD";
@@ -82,7 +109,7 @@ std::string to_string(jvm::ConstPool::MethodHandle::Type value) {
         case jvm::ConstPool::MethodHandle::Type::NEW_INVOKE_SPECIAL:
             return "NEW_INVOKE_SPECIAL";
     }
-    throw std::runtime_error("WTF - This is imposible");
+    return "WTF - NOT POSSIBLE";
 }
 
 template <>
@@ -90,23 +117,36 @@ std::string dumpConstPoolValue(const jvm::ConstPool::MethodHandle& value) {
     return fmt::format("MethhodHandle<kind: {}, referenceIndex: {}>", to_string(value.kind), value.referenceIndex);
 }
 
-void dumpConstPool(const jvm::ConstPool& constPool, std::ostream& output) {
+[[nodiscard]] nonstd::expected<void, Error> dumpConstPool(const jvm::ConstPool& constPool, std::ostream& output) {
     for (std::size_t i = 1; i < constPool.size() + 1; ++i) {
         output << "\t" << i << ": ";
+        auto data = constPool[i];
+        if (!data) return nonstd::make_unexpected(Error::from(data.error()));
         output << std::visit([](const auto& val) {
             return dumpConstPoolValue(val);
-        }, constPool[i]);
+        }, ***data);
         output << "\n";
     }
+    return {};
 }
 
 void dumpInterfaces(const jvm::ConstPool& cp, const jvm::Interfaces& interfaces, std::ostream& output) {
     if (!interfaces.empty()) {
         output << "implements ";
         std::vector<std::string> interfacesStrings;
-        std::transform(interfaces.cbegin(), interfaces.cend(), std::back_inserter(interfacesStrings), [&](const auto& interface) {
-            return cp.getRef<std::string>(interface->name);
-        });
+        std::optional<Error> err;
+        std::transform(interfaces.cbegin(), interfaces.cend(), std::back_inserter(interfacesStrings),
+            [&](const auto& interface) -> std::string {
+                auto data = cp.getRef<std::string>(interface->name);
+                if (!data) {
+                    if (!err.has_value()) {
+                        err = Error::from(data.error());
+                    }
+                    return "";
+                }
+                return ***data;
+            }
+        );
         output << fmt::format("{}", fmt::join(interfacesStrings, ", "));
         output << '\n';
     }
@@ -136,20 +176,27 @@ void dumpAttribute(const jvm::Attributes& attributes, std::ostream& output) {
     }
 }
 
-void dumpClassFile(const std::filesystem::path& pathToClass, std::ostream& output = std::cout) {
+[[nodiscard]] nonstd::expected<void, Error> dumpClassFile(const std::filesystem::path& pathToClass, std::ostream& output = std::cout) {
     auto classFile = jvm::Class::load(pathToClass);
-    output << "Class " << classFile.getClassName() << " extends " << classFile.getParentClassName() << "\n";
-    dumpInterfaces(classFile.constPool, classFile.interfaces, output);
-    output << "v." << classFile.version.major << "." << classFile.version.minor << "\n";
+    CONVERT_ERROR(classFile);
+    auto className = classFile->getClassName();
+    CONVERT_ERROR(className);
+    auto superName = classFile->getParentClassName();
+    CONVERT_ERROR(superName);
+    output << "Class " << *className << " extends " << *superName << "\n";
+    dumpInterfaces(classFile->constPool, classFile->interfaces, output);
+    output << "v." << classFile->version.major << "." << classFile->version.minor << "\n";
     output << "======================\n";
-    output << "ConstPool[" << classFile.constPool.size() << "]:\n";
-    dumpConstPool(classFile.constPool, output);
-    output << "Fields[" << classFile.fields.size() << "]:\n";
-    dumpFields(classFile.fields, output);
-    output << "Methods[" << classFile.methods.size() << "]:\n";
-    dumpMethods(classFile.methods, output);
-    output << "Attributes[" << classFile.attributes.size() << "]:\n";
-    dumpAttribute(classFile.attributes, output);
+    output << "ConstPool[" << classFile->constPool.size() << "]:\n";
+    auto res = dumpConstPool(classFile->constPool, output);
+    PROPAGATE_ERROR(res);
+    output << "Fields[" << classFile->fields.size() << "]:\n";
+    dumpFields(classFile->fields, output);
+    output << "Methods[" << classFile->methods.size() << "]:\n";
+    dumpMethods(classFile->methods, output);
+    output << "Attributes[" << classFile->attributes.size() << "]:\n";
+    dumpAttribute(classFile->attributes, output);
+    return {};
 }
 
 int main(int argc, const char* argv[]) {
@@ -164,16 +211,19 @@ int main(int argc, const char* argv[]) {
         return -1;
     }
 
-    try {
-        if (outputFile) {
-            auto ostream = std::ofstream(*outputFile);
-            dumpClassFile(classFile, ostream);
-        } else {
-            dumpClassFile(classFile, std::cout);
+    if (outputFile) {
+        auto ostream = std::ofstream(*outputFile);
+        auto dumpRes = dumpClassFile(classFile, ostream);
+        if (!dumpRes) {
+            fmt::print("Unable to load and parse class: {}", dumpRes.error().message);
+            return -2;
         }
-    } catch (std::exception& exc) {
-        fmt::print("Exception occurred: {}\n", exc.what());
-        return -2;
+    } else {
+        auto dumpRes = dumpClassFile(classFile, std::cout);
+        if (!dumpRes) {
+            fmt::print("Unable to load and parse class: {}", dumpRes.error().message);
+            return -2;
+        }
     }
 
     return 0;

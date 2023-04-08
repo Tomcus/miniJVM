@@ -10,6 +10,7 @@
 
 #include <fmt/format.h>
 
+#include "jvm/types/basic.hpp"
 #include "jvm/types/class/base.hpp"
 #include "jvm/utils/ref.hpp"
 
@@ -81,25 +82,27 @@ public:
         Index referenceIndex;
     };
 
-    using Value = std::variant<ClassInfo, StringRef, FieldRef, MethodRef, NameAndType, std::string, InvokeDynamic, MethodHandle>;
-
-    class Error: public std::runtime_error {
-    public:
-        Error(const std::string& message): runtime_error(message) { }
+    struct Error {
+        std::string message;
     };
 
-    static ConstPool load(std::istream& in);
+    using Value = std::variant<ClassInfo, StringRef, FieldRef, MethodRef, NameAndType, std::string, InvokeDynamic, MethodHandle>;
 
-    const Value& operator[](const std::size_t index) const;
+    static nonstd::expected<ConstPool, ParsingError> load(std::istream& in);
+
+    nonstd::expected<jvm::ConstRef<Value>, Error> operator[](const std::size_t index) const;
 
     template<typename Type>
-    ConstRef<Type> getRef(const std::size_t index) const {
-        validateIndex(index);
+    nonstd::expected<ConstRef<Type>, Error> getRef(const std::size_t index) const {
+        auto res = validateIndex(index);
+        PROPAGATE_ERROR(res);
         auto& object = data[index - 1];
         if (std::holds_alternative<Type>(object)) {
             return const_cast<Type &>(std::get<Type>(object));
         }
-        throw Error{fmt::format("Const pool value at index {}, doesn't hold type: {}", index, typeid(Type).name())};
+        return nonstd::make_unexpected(
+            Error{fmt::format("Const pool value at index {}, doesn't hold type: {}", index, typeid(Type).name())}
+        );
     }
 
     std::size_t size() const;
@@ -108,17 +111,20 @@ protected:
     std::vector<Value> data;
     std::size_t dataSize;
 
-    void loadInstance(std::istream& in);
-    void validateIndex(const std::size_t index) const;
+    [[nodiscard]] nonstd::expected<void, ParsingError> loadInstance(std::istream& in);
+    [[nodiscard]] nonstd::expected<void, Error> validateIndex(const std::size_t index) const;
 
     template<typename Type>
-    Type& get(const std::size_t index) {
-        validateIndex(index);
+    nonstd::expected<Type&, Error> get(const std::size_t index) {
+        auto res = validateIndex(index);
+        PROPAGATE_ERROR(res);
         auto& object = data[index - 1];
         if (std::holds_alternative<Type>(object)) {
             return std::get<Type>(object);
         }
-        throw Error{fmt::format("Const pool value at index {}, doesn't hold type: {}", index, typeid(Type).name())};
+        return nonstd::make_unexpected(
+            Error{fmt::format("Const pool value at index {}, doesn't hold type: {}", index, typeid(Type).name())}
+        );
     }
 };
 
