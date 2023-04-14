@@ -16,7 +16,4 @@ target_link_libraries(minijvm PUBLIC
     CONAN_PKG::expected-lite
 )
 
-target_add_unit_tests(TARGET minijvm FILES
-    src/utils/ref.unit.cpp
-    src/types/class/attribute.unit.cpp
-)
+target_glob_tests(minijvm)
