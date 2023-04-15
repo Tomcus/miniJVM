@@ -154,7 +154,7 @@ void dumpInterfaces(const jvm::ConstPool& cp, const jvm::Interfaces& interfaces,
 
 void dumpFields(const jvm::Fields& fields, std::ostream& output) {
     for (const auto& field: fields) {
-        output << fmt::format("\tField<flags: {:#04x}, name: {}, descriptor: {}>\n", static_cast<std::uint16_t>(field.flags), std::string(field.name), field.descriptorIndex);
+        output << fmt::format("\tField<flags: {:#04x}, name: {}, descriptor: {}>\n", static_cast<std::uint16_t>(field.flags), std::string(field.name), std::string(field.typeDescriptor));
         for (const auto& attribute: field.attributes) {
             output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", std::string(attribute.name), fmt::join(attribute.data, ", "));
         }
@@ -163,7 +163,7 @@ void dumpFields(const jvm::Fields& fields, std::ostream& output) {
 
 void dumpMethods(const jvm::Methods& methods, std::ostream& output) {
     for (const auto& method: methods) {
-        output << fmt::format("\tMethod<flags: {:#04x}, name: {}, descriptor: {}>\n", static_cast<std::uint16_t>(method.flags), std::string(method.name), method.descriptorIndex);
+        output << fmt::format("\tMethod<flags: {:#04x}, name: {}, descriptor: {}>\n", static_cast<std::uint16_t>(method.flags), std::string(method.name), std::string(method.typeDescriptor));
         for (const auto& attribute: method.attributes) {
             output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", std::string(attribute.name), fmt::join(attribute.data, ", "));
         }

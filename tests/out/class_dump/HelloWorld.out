@@ -32,9 +32,9 @@ ConstPool[28]:
 	28: String<"HelloWorld.java">
 Fields[0]:
 Methods[2]:
-	Method<flags: 0x01, name: <init>, descriptor: 6>
+	Method<flags: 0x01, name: <init>, descriptor: ()V>
 		Attribute<name: Code, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 24, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
-	Method<flags: 0x09, name: main, descriptor: 26>
+	Method<flags: 0x09, name: main, descriptor: ([Ljava/lang/String;)V>
 		Attribute<name: Code, data: [0, 2, 0, 1, 0, 0, 0, 9, 178, 0, 7, 18, 13, 182, 0, 15, 177, 0, 0, 0, 1, 0, 24, 0, 0, 0, 10, 0, 2, 0, 0, 0, 3, 0, 8, 0, 4]>
 Attributes[1]:
 	Attribute<name: SourceFile, data: [0, 28]>

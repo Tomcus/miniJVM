@@ -152,14 +152,16 @@ nonstd::expected<void, std::variant<ParsingError, ConstPool::Error>> Class::read
         PROPAGATE_ERROR(nameIndex);
         auto nameRef = constPool.getRef<std::string>(*nameIndex);
         PROPAGATE_ERROR(nameRef);
-        auto dataIndex = read<Index>(in);
-        PROPAGATE_ERROR(dataIndex);
+        auto typeIndex = read<Index>(in);
+        PROPAGATE_ERROR(typeIndex);
+        auto typeDescriptor = constPool.getRef<std::string>(*typeIndex);
+        PROPAGATE_ERROR(typeDescriptor);
         auto attrs = readAttributes(in);
         PROPAGATE_ERROR(attrs);
         fields.emplace_back(Field{
             *inputAccessFlags,
             *nameRef,
-            *dataIndex,
+            *typeDescriptor,
             *attrs
         });
     }
@@ -178,14 +180,16 @@ nonstd::expected<void, std::variant<ParsingError, ConstPool::Error>> Class::read
         PROPAGATE_ERROR(nameIndex);
         auto nameRef = constPool.getRef<std::string>(*nameIndex);
         PROPAGATE_ERROR(nameRef);
-        auto dataIndex = read<Index>(in);
-        PROPAGATE_ERROR(dataIndex);
+        auto typeIndex = read<Index>(in);
+        PROPAGATE_ERROR(typeIndex);
+        auto typeDescriptor = constPool.getRef<std::string>(*typeIndex);
+        PROPAGATE_ERROR(typeDescriptor);
         auto attrs = readAttributes(in);
         PROPAGATE_ERROR(attrs);
         methods.emplace_back(Method{
             *inputAccessFlags,
             *nameRef,
-            *dataIndex,
+            *typeDescriptor,
             *attrs
         });
     }

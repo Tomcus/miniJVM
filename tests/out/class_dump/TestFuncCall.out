@@ -46,11 +46,11 @@ ConstPool[42]:
 	42: String<"TestFuncCall.java">
 Fields[0]:
 Methods[3]:
-	Method<flags: 0x01, name: <init>, descriptor: 6>
+	Method<flags: 0x01, name: <init>, descriptor: ()V>
 		Attribute<name: Code, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 38, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
-	Method<flags: 0x09, name: print, descriptor: 36>
+	Method<flags: 0x09, name: print, descriptor: (I)V>
 		Attribute<name: Code, data: [0, 2, 0, 1, 0, 0, 0, 11, 178, 0, 7, 26, 184, 0, 13, 182, 0, 19, 177, 0, 0, 0, 1, 0, 38, 0, 0, 0, 10, 0, 2, 0, 0, 0, 3, 0, 10, 0, 4]>
-	Method<flags: 0x09, name: main, descriptor: 40>
+	Method<flags: 0x09, name: main, descriptor: ([Ljava/lang/String;)V>
 		Attribute<name: Code, data: [0, 2, 0, 1, 0, 0, 0, 11, 16, 7, 16, 8, 184, 0, 25, 184, 0, 31, 177, 0, 0, 0, 1, 0, 38, 0, 0, 0, 10, 0, 2, 0, 0, 0, 7, 0, 10, 0, 8]>
 Attributes[1]:
 	Attribute<name: SourceFile, data: [0, 42]>

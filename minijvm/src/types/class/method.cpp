@@ -3,12 +3,14 @@
 jvm::Method::Method(
         jvm::AccessFlags acFlags,
         jvm::ConstRef<std::string> fieldName,
-        Index typeDescriptorIndex,
+        jvm::ConstRef<std::string> methodTypeDescriptor,
         Attributes fieldAttributes): jvm::ClassField{
     .flags = acFlags,
     .name = fieldName,
-    .descriptorIndex = typeDescriptorIndex,
+    .typeDescriptor = methodTypeDescriptor,
     .attributes = std::move(fieldAttributes)
 } {
-    // TODO: assign mandatory attributes
+    /*auto codeBytes = getAndRemoveAttributeData("Code");
+    auto codeBytesSpan = std::span(codeBytes.data(), codeBytes.size());
+    code = *jvm::parseInstructions(codeBytesSpan);*/
 }

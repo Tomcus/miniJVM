@@ -18,9 +18,9 @@ ConstPool[14]:
 	14: String<"Add.java">
 Fields[0]:
 Methods[2]:
-	Method<flags: 0x01, name: <init>, descriptor: 6>
+	Method<flags: 0x01, name: <init>, descriptor: ()V>
 		Attribute<name: Code, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
-	Method<flags: 0x09, name: add, descriptor: 12>
+	Method<flags: 0x09, name: add, descriptor: (II)I>
 		Attribute<name: Code, data: [0, 2, 0, 2, 0, 0, 0, 4, 26, 27, 96, 172, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 3]>
 Attributes[1]:
 	Attribute<name: SourceFile, data: [0, 14]>
