@@ -1,4 +1,5 @@
 add_library(minijvm
+    src/execution/instructions.cpp
     src/types/const_pool.cpp
     src/types/class.cpp
     src/types/class/method.cpp
