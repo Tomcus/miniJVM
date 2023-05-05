@@ -6,7 +6,7 @@
 
 namespace jvm {
 
-using StackItem = std::variant<std::int32_t, std::int64_t, float, double>;
+using StackItem = std::variant<std::monostate, std::int32_t, std::int64_t, float, double>;
 using Stack = std::stack<StackItem>;
 
 }

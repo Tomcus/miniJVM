@@ -12,7 +12,6 @@ public:
            jvm::ConstRef<std::string> fieldName,
            jvm::ConstRef<std::string> typeDescriptor,
            Attributes fieldAttributes);
-protected:
     Instructions code;
 };
 

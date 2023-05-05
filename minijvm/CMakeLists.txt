@@ -1,11 +1,16 @@
 add_library(minijvm
     src/execution/instructions.cpp
-    src/types/const_pool.cpp
+    src/execution/instructions/invoke.cpp
+    src/execution/instructions/misc.cpp
+    src/execution/instructions/return.cpp
+    src/execution/instructions/stack_load_const.cpp
+    src/execution/instructions/stack_load_local.cpp
+    src/types/basic.cpp
     src/types/class.cpp
     src/types/class/class_field.cpp
     src/types/class/field.cpp
     src/types/class/method.cpp
-    src/types/basic.cpp
+    src/types/const_pool.cpp
 )
 
 target_include_directories(minijvm PUBLIC

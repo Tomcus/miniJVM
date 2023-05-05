@@ -16,12 +16,14 @@
 #include <vector>
 
 #include <nonstd/expected.hpp>
+#include <fmtlog/fmtlog.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #include <lyra/lyra.hpp>
 #include <fmt/format.h>
+#include <fmt/ostream.h>
 #include <fmt/core.h>
 #pragma GCC diagnostic pop
 
@@ -161,9 +163,156 @@ void dumpFields(const jvm::Fields& fields, std::ostream& output) {
     }
 }
 
+template<typename InstructionType>
+void dumpInstruction(std::ostream& output, const InstructionType&) {
+    output << "UNKNOWN INSTRUCTION";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::nop&) {
+    output << "nop";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::aconst_null&) {
+    output << "aconst_null";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iconst_m1&) {
+    output << "iconst_m1";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iconst_0&) {
+    output << "iconst_0";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iconst_1&) {
+    output << "iconst_1";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iconst_2&) {
+    output << "iconst_2";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iconst_3&) {
+    output << "iconst_3";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iconst_4&) {
+    output << "iconst_4";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iconst_5&) {
+    output << "iconst_5";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::lconst_0&) {
+    output << "lconst_0";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::lconst_1&) {
+    output << "lconst_1";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::aload_0&) {
+    output << "aload_0";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::aload_1&) {
+    output << "aload_1";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::aload_2&) {
+    output << "aload_2";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::aload_3&) {
+    output << "aload_3";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iload_0&) {
+    output << "iload_0";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iload_1&) {
+    output << "iload_1";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iload_2&) {
+    output << "iload_2";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iload_3&) {
+    output << "iload_3";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::aload& ins) {
+    output << fmt::format("aload<{}>", ins.localIndex);
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iload& ins) {
+    output << fmt::format("iload<{}>", ins.localIndex);
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::ret&) {
+    output << "return";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::ireturn&) {
+    output << "ireturn";
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::invokespecial& ins) {
+    output << fmt::format("invokespecial<{}>", ins.cpIndex);
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::iadd&) {
+    output << "iadd";
+}
+
+void dumpCode(std::ostream& output, const jvm::Instructions& code) {
+    bool first = true;
+    output << fmt::format("\t\tCode: ");
+    for (const auto& instruction: code) {
+        if (first) {
+            first = false;
+        } else {
+            output << ", ";
+        }
+        std::visit([&](auto& ins) {
+            dumpInstruction(output, ins);
+        }, instruction);
+    }
+    output << '\n';
+}
+
 void dumpMethods(const jvm::Methods& methods, std::ostream& output) {
     for (const auto& method: methods) {
         output << fmt::format("\tMethod<flags: {:#04x}, name: {}, descriptor: {}>\n", static_cast<std::uint16_t>(method.flags), std::string(method.name), std::string(method.typeDescriptor));
+        dumpCode(output, method.code);
         for (const auto& attribute: method.attributes) {
             output << fmt::format("\t\tAttribute<name: {}, data: [{}]>\n", std::string(attribute.name), fmt::join(attribute.data, ", "));
         }
@@ -199,16 +348,37 @@ void dumpAttribute(const jvm::Attributes& attributes, std::ostream& output) {
     return {};
 }
 
+void setLogLevel(std::string_view level) {
+    if (level == "debug" || level == "dbg") {
+        fmtlog::setLogLevel(fmtlog::DBG);
+    }
+}
+
+template<> struct fmt::formatter<lyra::cli>: fmt::ostream_formatter { };
+
 int main(int argc, const char* argv[]) {
     std::filesystem::path classFile;
     std::optional<std::filesystem::path> outputFile;
+    std::optional<std::string> logLevel;
+    bool showHelp = false;
     auto cli = lyra::cli()
+        | lyra::help(showHelp)
         | lyra::arg(classFile, "Class File") ("which class file to dump")
-        | lyra::opt(outputFile, "Output file")["-o"]["--output"]("output file where to create the dump");
+        | lyra::opt(outputFile, "Output file")["-o"]["--output"]("output file where to create the dump")
+        | lyra::opt(logLevel, "Log level")["-l"]["--log-level"]("output log level");
     auto res = cli.parse({argc, argv});
     if (!res) {
         fmt::print("Unable to parse command line arguments. {}", res.message());
         return -1;
+    }
+
+    if (showHelp) {
+        fmt::print("{}\n", cli);
+        return 0;
+    }
+
+    if (logLevel) {
+        setLogLevel(*logLevel);
     }
 
     if (outputFile) {
@@ -216,15 +386,18 @@ int main(int argc, const char* argv[]) {
         auto dumpRes = dumpClassFile(classFile, ostream);
         if (!dumpRes) {
             fmt::print("Unable to load and parse class: {}", dumpRes.error().message);
+            fmtlog::poll();
             return -2;
         }
     } else {
         auto dumpRes = dumpClassFile(classFile, std::cout);
         if (!dumpRes) {
             fmt::print("Unable to load and parse class: {}", dumpRes.error().message);
+            fmtlog::poll();
             return -2;
         }
     }
 
+    fmtlog::poll();
     return 0;
 }

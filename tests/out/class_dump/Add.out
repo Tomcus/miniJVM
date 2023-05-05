@@ -19,8 +19,8 @@ ConstPool[14]:
 Fields[0]:
 Methods[2]:
 	Method<flags: 0x01, name: <init>, descriptor: ()V>
-		Attribute<name: Code, data: [0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 1, 177, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 1]>
+		Code: nop, aconst_null, nop, aconst_null, nop, nop, nop, iconst_2, aload_0, invokespecial<1>, return, nop, nop, nop, aconst_null, nop, lconst_1, nop, nop, nop, iconst_3, nop, aconst_null, nop, nop, nop, aconst_null
 	Method<flags: 0x09, name: add, descriptor: (II)I>
-		Attribute<name: Code, data: [0, 2, 0, 2, 0, 0, 0, 4, 26, 27, 96, 172, 0, 0, 0, 1, 0, 10, 0, 0, 0, 6, 0, 1, 0, 0, 0, 3]>
+		Code: nop, iconst_m1, nop, iconst_m1, nop, nop, nop, iconst_1, iload_0, iload_1, iadd, ireturn, nop, nop, nop, aconst_null, nop, lconst_1, nop, nop, nop, iconst_3, nop, aconst_null, nop, nop, nop, iconst_0
 Attributes[1]:
 	Attribute<name: SourceFile, data: [0, 14]>

@@ -12,7 +12,7 @@ void test(jvm::Stack& stack, std::size_t expectedStackSize, PrimitiveType expect
     REQUIRE(std::get<PrimitiveType>(top) == expectedStoredValue);
 }
 
-TEST_CASE("Test int loading instruction", "[ops]") {
+TEST_CASE("Test int loading instructions", "[ops]") {
     jvm::Stack stack{};
 
     test<int, jvm::op::iconst_0>(stack, 1, 0);
@@ -22,4 +22,16 @@ TEST_CASE("Test int loading instruction", "[ops]") {
     test<int, jvm::op::iconst_4>(stack, 5, 4);
     test<int, jvm::op::iconst_5>(stack, 6, 5);
     test<int, jvm::op::iconst_m1>(stack, 7, -1);
+}
+
+TEST_CASE("Test null loading instruction", "[ops]") {
+    jvm::Stack stack{};
+    test<std::monostate, jvm::op::aconst_null>(stack, 1, std::monostate{});
+}
+
+TEST_CASE("Test long loading instructions", "[ops]") {
+    jvm::Stack stack{};
+    
+    test<std::int64_t, jvm::op::lconst_0>(stack, 1, 0L);
+    test<std::int64_t, jvm::op::lconst_1>(stack, 2, 1L);
 }

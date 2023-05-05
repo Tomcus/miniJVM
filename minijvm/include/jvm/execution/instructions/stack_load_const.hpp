@@ -3,7 +3,6 @@
 #include <nonstd/expected.hpp>
 
 #include "jvm/execution/instructions/forward.hpp"
-#include "jvm/execution/stack.hpp"
 
 namespace jvm::op {
 
@@ -11,11 +10,11 @@ namespace impl {
     
 template<typename Self, typename PrimitiveType, PrimitiveType VALUE>
 struct StackPushConstant {
-    static Self parse() {
+    [[nodiscard]] static Self parse() {
         return Self{};
     }
 
-    void operator()(INSTRUCTION_INVOKE_FUNCTION) {
+    void operator()(INSTRUCTION_INVOKE_FUNCTION) const {
         stack.push(VALUE);
     }
 };
@@ -42,6 +41,20 @@ struct iconst_4: public impl::StackPushConstant<iconst_4, int, 4> {
 };
 struct iconst_5: public impl::StackPushConstant<iconst_5, int, 5> {
     static constexpr std::uint8_t OP_CODE = 0x08;
+};
+
+struct lconst_0: public impl::StackPushConstant<lconst_0, std::int64_t, 0L> {
+    static constexpr std::uint8_t OP_CODE = 0x09;
+};
+
+struct lconst_1: public impl::StackPushConstant<lconst_1, std::int64_t, 1L> {
+    static constexpr std::uint8_t OP_CODE = 0x0a;
+};
+
+struct aconst_null {
+    static constexpr std::uint8_t OP_CODE = 0x01;
+    [[nodiscard]] static aconst_null parse();
+    void operator()(INSTRUCTION_INVOKE_FUNCTION) const;
 };
 
 }
