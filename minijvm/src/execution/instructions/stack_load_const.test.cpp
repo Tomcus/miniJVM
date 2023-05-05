@@ -35,3 +35,24 @@ TEST_CASE("Test long loading instructions", "[ops]") {
     test<std::int64_t, jvm::op::lconst_0>(stack, 1, 0L);
     test<std::int64_t, jvm::op::lconst_1>(stack, 2, 1L);
 }
+
+template<typename InstructionType>
+void testipush(jvm::Stack& stack, std::vector<std::uint8_t> bytes, std::size_t expectedStackSize, int expectedValue) {
+    jvm::Bytes bytesView(bytes.data(), bytes.size());
+    auto instruction = InstructionType::parse(bytesView);
+    instruction(stack);
+    REQUIRE(stack.size() == expectedStackSize);
+    auto top = stack.top();
+    REQUIRE(std::holds_alternative<int>(top));
+    REQUIRE(std::get<int>(top) == expectedValue);
+}
+
+TEST_CASE("Test pushing constatnt from smaller type", "[ops]") {
+    jvm::Stack stack{};
+
+    testipush<jvm::op::bipush>(stack, {0x00}, 1, 0);
+    testipush<jvm::op::bipush>(stack, {0x69}, 2, 0x69);
+    testipush<jvm::op::sipush>(stack, {0x00, 0x00}, 3, 0);
+    testipush<jvm::op::sipush>(stack, {0x00, 0x12}, 4, 0x12);
+    testipush<jvm::op::sipush>(stack, {0x16, 0x00}, 5, 0x1600);
+}

@@ -19,6 +19,24 @@ struct StackPushConstant {
     }
 };
 
+template<typename Self, std::size_t TypeSize>
+struct PushSmallerTypeConstant {
+    int toPush;
+    [[nodiscard]] static Self parse(jvm::Bytes& bytes) {
+        auto data = bytes.subspan(0, TypeSize);
+        bytes = bytes.subspan(TypeSize);
+        int toPush = 0;
+        for (auto byte: data) {
+            toPush = (toPush << 8) + byte;
+        }
+        return Self{toPush};
+    }
+
+    void operator()(INSTRUCTION_INVOKE_FUNCTION) const {
+        stack.push(toPush);
+    }
+};
+
 }
 
 struct iconst_m1: public impl::StackPushConstant<iconst_m1, int, -1> {
@@ -55,6 +73,14 @@ struct aconst_null {
     static constexpr std::uint8_t OP_CODE = 0x01;
     [[nodiscard]] static aconst_null parse();
     void operator()(INSTRUCTION_INVOKE_FUNCTION) const;
+};
+
+struct bipush: impl::PushSmallerTypeConstant<bipush, 1> {
+    static constexpr std::uint8_t OP_CODE = 0x10;
+};
+
+struct sipush: impl::PushSmallerTypeConstant<sipush, 2> {
+    static constexpr std::uint8_t OP_CODE = 0x11;
 };
 
 }

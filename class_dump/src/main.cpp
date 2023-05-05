@@ -293,6 +293,16 @@ void dumpInstruction(std::ostream& output, const jvm::op::iadd&) {
     output << "iadd";
 }
 
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::bipush& ins) {
+    output << fmt::format("bipush<{:02x}>", ins.toPush);
+}
+
+template<>
+void dumpInstruction(std::ostream& output, const jvm::op::sipush& ins) {
+    output << fmt::format("sipush<{:04x}>", ins.toPush);
+}
+
 void dumpCode(std::ostream& output, const jvm::Instructions& code) {
     bool first = true;
     output << fmt::format("\t\tCode: ");

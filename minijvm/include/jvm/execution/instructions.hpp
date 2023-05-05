@@ -29,6 +29,8 @@ using Instruction = std::variant<
     jvm::op::iconst_m1,
     jvm::op::lconst_0,
     jvm::op::lconst_1,
+    jvm::op::bipush,
+    jvm::op::sipush,
     jvm::op::aload_0,
     jvm::op::aload_1,
     jvm::op::aload_2,
