@@ -4,6 +4,7 @@ add_library(minijvm
     src/execution/instructions/misc.cpp
     src/execution/instructions/return.cpp
     src/execution/instructions/stack_load_const.cpp
+    src/execution/instructions/stack_load_const_pool.cpp
     src/execution/instructions/stack_load_local.cpp
     src/types/basic.cpp
     src/types/class.cpp

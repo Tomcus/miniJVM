@@ -39,7 +39,10 @@ TEST_CASE("Test instruction parsing", "[ops]") {
         0xac,
         0x10, 0x00,
         0x10, 0x01,
-        0x11, 0x12, 0x34
+        0x11, 0x12, 0x34,
+        0x12, 0x69,
+        0x13, 0x12, 0x34,
+        0x14, 0x56, 0x78
     };
 
     auto span = std::span{bytes.data(), bytes.size()};
@@ -48,7 +51,7 @@ TEST_CASE("Test instruction parsing", "[ops]") {
     REQUIRE(res);
     REQUIRE(span.size() == 0);
     auto instructions = *res;
-    REQUIRE(instructions.size() == 32);
+    REQUIRE(instructions.size() == 35);
 
     // iconst instructions
     REQUIRE(std::holds_alternative<jvm::op::iconst_m1>(instructions[0]));
@@ -99,6 +102,13 @@ TEST_CASE("Test instruction parsing", "[ops]") {
     REQUIRE(std::get<jvm::op::bipush>(instructions[30]).toPush == 1);
     REQUIRE(std::holds_alternative<jvm::op::sipush>(instructions[31]));
     REQUIRE(std::get<jvm::op::sipush>(instructions[31]).toPush == 0x1234);
+
+    REQUIRE(std::holds_alternative<jvm::op::ldc>(instructions[32]));
+    REQUIRE(std::get<jvm::op::ldc>(instructions[32]).cpIndex == 0x69);
+    REQUIRE(std::holds_alternative<jvm::op::ldc_w>(instructions[33]));
+    REQUIRE(std::get<jvm::op::ldc_w>(instructions[33]).cpIndex == 0x1234);
+    REQUIRE(std::holds_alternative<jvm::op::ldc2_w>(instructions[34]));
+    REQUIRE(std::get<jvm::op::ldc2_w>(instructions[34]).cpIndex == 0x5678);
 
     fmtlog::poll();
 }

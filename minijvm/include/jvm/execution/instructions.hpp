@@ -12,6 +12,7 @@
 #include "jvm/execution/instructions/misc.hpp"
 #include "jvm/execution/instructions/return.hpp"
 #include "jvm/execution/instructions/stack_load_const.hpp"
+#include "jvm/execution/instructions/stack_load_const_pool.hpp"
 #include "jvm/execution/instructions/stack_load_local.hpp"
 #include "jvm/types/basic.hpp"
 
@@ -31,6 +32,9 @@ using Instruction = std::variant<
     jvm::op::lconst_1,
     jvm::op::bipush,
     jvm::op::sipush,
+    jvm::op::ldc,
+    jvm::op::ldc_w,
+    jvm::op::ldc2_w,
     jvm::op::aload_0,
     jvm::op::aload_1,
     jvm::op::aload_2,

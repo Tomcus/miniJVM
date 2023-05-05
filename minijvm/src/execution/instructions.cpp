@@ -70,6 +70,12 @@ nonstd::expected<jvm::Instruction, jvm::ParsingError> jvm::parseInstruction(std:
             return op::bipush::parse(bytes);
         case op::sipush::OP_CODE:
             return op::sipush::parse(bytes);
+        case op::ldc::OP_CODE:
+            return op::ldc::parse(bytes);
+        case op::ldc_w::OP_CODE:
+            return op::ldc_w::parse(bytes);
+        case op::ldc2_w::OP_CODE:
+            return op::ldc2_w::parse(bytes);
         default:
             return nonstd::make_unexpected(ParsingError{
                 .message = fmt::format("Parsing unhandeled instruction with opcode: {:02x}", opCode)
